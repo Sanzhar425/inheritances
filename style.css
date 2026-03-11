@@ -1,0 +1,403 @@
+/*
+  ╔════════════════════════════════════════════════════════════════════════════╗
+  ║          СТИЛИ ДЛЯ ПРИЛОЖЕНИЯ "НАСЛЕДСТВО" (маркетплейс студентов)         ║
+  ║                                                                            ║
+  ║  СТРУКТУРА:                                                               ║
+  ║  1. Глобальные стили (сброс, шрифты, базовые элементы)                    ║
+  ║  2. Основной контейнер приложения (.mobile-screen)                        ║
+  ║  3. Цветовая схема (зеленые и светлые тона)                               ║
+  ║  4. Утилиты (скрытие элементов, переполнение)                             ║
+  ║  5. Адаптивность для разных размеров экранов                              ║
+  ║  6. Специальные стили для мобильных устройств                             ║
+  ║                                                                            ║
+  ║  ЦВЕТОВАЯ ПАЛИТРА:                                                        ║
+  ║  - Зеленый основной: #4B8E4B                                               ║
+  ║  - Зеленый светлый: #E9F2E9 (для фонов)                                   ║
+  ║  - Серый темный: #3a6a3a (на hover)                                       ║
+  ║  - Серый очень темный: #2d5530 (на active)                                ║
+  ╚════════════════════════════════════════════════════════════════════════════╝
+*/
+
+/* ===== ГЛОБАЛЬНЫЕ СТИЛИ ===== */
+/* Сброс отступов и основные свойства для всех элементов */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Плавная прокрутка при переходах по якорям */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Основной фон и шрифт для всей страницы */
+body {
+    font-family: 'Inter', sans-serif;
+    /* градиент как в account.css */
+    background: linear-gradient(120deg, #c2e9fb, #3d80ec);
+    padding: 10px;
+    overflow-x: hidden; /* предотвращаем горизонтальный скролл */
+}
+
+/* ===== ОСНОВНОЙ КОНТЕЙНЕР ПРИЛОЖЕНИЯ ===== */
+/* Главный контейнер приложения (все экраны внутри) */
+.mobile-screen {
+    width: 100%;
+    min-height: 100vh;
+    /* градиент фона тот же, который на body */
+    background: linear-gradient(120deg, #c2e9fb, #f8f9fa);
+
+    
+    overflow-y: auto;
+    position: relative;
+}
+
+#screen-home {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+#listingsGrid {
+    margin-left: 0 !important;
+    width: 100% !important;
+    flex: 1 1 auto;
+}
+
+
+/* ===== СТИЛИЗАЦИЯ СКРОЛЛА ===== */
+/* Ширина скроллбара */
+.mobile-screen::-webkit-scrollbar {
+    width: 6px;
+}
+
+/* Фон трека скроллбара */
+.mobile-screen::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+/* Сам ползунок скроллбара (зеленый цвет) */
+.mobile-screen::-webkit-scrollbar-thumb {
+    background: #4B8E4B;
+    border-radius: 10px;
+}
+
+/* Темнее при наведении на скроллбар */
+.mobile-screen::-webkit-scrollbar-thumb:hover {
+    background: #3a6a3a;
+}
+
+/* ===== УТИЛИТА: СКРЫТИЕ СКРОЛЛА ===== */
+/* Скрывает скроллбар для horizontal-scroll элементов (категории) */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;      /* IE и Edge */
+    scrollbar-width: none;         /* Firefox */
+}
+
+/* ===== ЦВЕТОВАЯ СХЕМА ===== */
+/* Зеленый основной цвет используется для всех кнопок действия */
+.primary-green {
+    background-color: #4B8E4B;
+}
+
+/* Темнее при наведении мышки (hover) */
+.primary-green:hover {
+    background-color: #3a6a3a;
+}
+
+/* Еще темнее при клике (active) */
+.primary-green:active {
+    background-color: #2d5530;
+}
+
+/* Зеленый текст для ссылок и важных элементов */
+.text-primary-green {
+    color: #4B8E4B;
+}
+
+/* Светлый зеленый фон для информационных блоков */
+.bg-light-green {
+    background-color: #E9F2E9;
+}
+
+/* Вспомогательные классы для подсветки выбранной категории */
+.ring-2.ring-primary-green {
+    box-shadow: 0 0 0 3px rgba(75,142,75,0.25);
+    border-radius: 12px;
+}
+
+/* ===== УТИЛИТА: СКРЫТИЕ ЭЛЕМЕНТОВ ===== */
+/* Скрывает элементы (используется для переключения экранов) */
+.hidden {
+    display: none !important;
+}
+
+/* ===== АДАПТИВНОСТЬ: МЕДИА ЗАПРОСЫ ===== */
+
+/* Очень маленькие экраны (360px и выше) - старые смартфоны */
+@media (min-width: 360px) {
+    body {
+        padding: 0;
+    }
+}
+
+/* Средние экраны (768px и выше) - планшеты и большие смартфоны */
+@media (min-width: 768px) {
+    body {
+        padding: 0;
+        background: white;
+    }
+}
+
+/* Большие экраны (1024px и выше) - десктопные компьютеры */
+@media (min-width: 1024px) {
+    body {
+        padding: 0;
+        background: white;
+    }
+}
+
+/* Очень большие экраны (1440px и выше) - HD мониторы */
+@media (min-width: 1440px) {
+    body {
+        padding: 0;
+    }
+}
+
+/* ===== АДАПТИВНОСТЬ: ОРИЕНТАЦИЯ ЭКРАНА ===== */
+/* Ландшафтная ориентация (горизонтальная) */
+@media (orientation: landscape) {
+    body {
+        padding: 0;
+    }
+}
+
+/* ===== АДАПТИВНОСТЬ: СЕНСОРНЫЕ УСТРОЙСТВА ===== */
+/* Стили для сенсорных устройств (телефоны, планшеты) */
+@media (hover: none) and (pointer: coarse) {
+    /* Больше padding на кнопках для удобства тапа */
+    button {
+        padding-top: 16px;
+        padding-bottom: 16px;
+    }
+    
+    /* Визуальная обратная связь при тапе */
+    button:active {
+        opacity: 0.8;
+    }
+    
+/* ===== КАСТОМНЫЕ ПАРАМЕТРЫ КАРТОЧЕК/ИКОНОК ===== */
+:root {
+    --card-size: 140px; /* карточка (изображение) 140x140 */
+    --icon-size: 56px;  /* иконки категорий 56px */
+    --gap-size: 24px;   /* расстояния между карточками */
+    --card-radius: 16px;/* border-radius для карточек и иконок */
+}
+
+/* Сетка карточек — используем точный gap */
+#listingsGrid, #favoritesGrid {
+    gap: var(--gap-size) !important;
+    width: 100%;
+    justify-items: start;
+}
+
+/* Карточка: квадратое изображение фиксированного размера */
+#listingsGrid > div, #favoritesGrid > div {
+    border-radius: var(--card-radius) !important;
+    overflow: hidden;
+}
+
+#listingsGrid > div > img,
+#favoritesGrid > div > img {
+    /* allow natural sizing, height controlled by JS classes */
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 0; /* image inside card — card has rounded corners */
+}
+
+/* Иконки категорий: 56x56 с радиусом 16px */
+
+/* Контейнер категорий: отступы между кнопками */
+#categoriesRow {
+    gap: 28px !important; /* выбранный диапазон 24–32: ставим 28px */
+}
+
+/* Размеры самих кнопок (ширина/высота 120–160): используем 140px */
+#categoriesRow > div {
+    width: 140px !important;
+    height: 140px !important;
+    min-width: 140px !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+/* Иконка внутри кнопки: 40–64px — используем 56px */
+#categoriesRow > div > div {
+    width: 56px !important;
+    height: 56px !important;
+    min-width: 56px !important;
+    min-height: 56px !important;
+    border-radius: 14px !important; /* скругление 12–16: используем 14px */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px; /* эмодзи/иконка внутри — примерно 40px */
+}
+
+/* Обеспечим согласованное скругление для кнопок */
+#categoriesRow > div span, #categoriesRow > div > div {
+    border-radius: 14px !important;
+}
+
+/* Общий радиус для мелких элементов, согласованный с запросом */
+.rounded-2xl {
+    border-radius: var(--card-radius) !important;
+}
+
+/* ===== СТИЛИ ИЗ personal-account.html/account.css ===== */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    backdrop-filter: blur(10px);
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.search {
+    width: 300px;
+    padding: 8px;
+    border-radius: 20px !important;
+    border: none;
+}
+
+/* Стиль кнопки Личный кабинет: белый прямоугольник с мягкими краями */
+#profileBtn {
+    background: #ffffff !important;
+    color: #1f2937 !important; /* темный текст */
+    padding: 6px 10px !important;
+    border-radius: 10px !important; /* мягкие углы */
+    border: 1px solid rgba(15, 23, 42, 0.06) !important; /* тонкая рамка */
+    box-shadow: 0 1px 2px rgba(16,24,40,0.03) !important;
+    font-weight: 600 !important;    
+}
+
+.nav span {
+    margin-left: 15px;
+    cursor: pointer;
+}
+
+.profile-section {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: white;
+    margin: 30px;
+    padding: 20px;
+    border-radius: 20px;
+}
+
+.avatar {
+    width: 80px;
+    border-radius: 50%;
+}
+
+.edit-btn {
+    background: #2e7d32;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.add-ad {
+    margin: 0 30px;
+}
+
+.add-card {
+    background: white;
+    padding: 20px;
+    border-radius: 20px;
+    text-align: center;
+}
+
+.add-card button {
+    background: #2e7d32;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+}
+
+.my-ads {
+    margin: 30px;
+}
+
+.ads-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.ad-card {
+    background: white;
+    border-radius: 15px;
+    padding: 10px;
+    text-align: center;
+    transition: 0.3s;
+}
+
+.ad-card img {
+    width: 100%;
+    border-radius: 10px;
+}
+
+.ad-card:hover {
+    transform: translateY(-5px);
+}
+
+.price {
+    color: #2e7d32;
+    font-weight: bold;
+}
+
+.actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.edit {
+    background: #4caf50;
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 8px;
+}
+
+.delete {
+    background: #e53935;
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 8px;
+}
+}

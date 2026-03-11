@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title data-i18n="profile_title">Личный кабинет</title>
+  <link rel="stylesheet" href="account.css">
+</head>
+<body>
+
+<!-- 🔝 Шапка -->
+<header class="header">
+  <a href="index.html" data-i18n="app_title" class="logo">Наследство</a>
+  <input type="text" data-i18n-placeholder="search_placeholder" placeholder="Поиск..." class="search">
+  <div class="nav">
+    <span data-i18n="favorites_label">❤️ Избранное</span>
+    <!-- Селектор языка -->
+    <select id="langSwitcher" class="border border-gray-200 rounded p-1 text-sm">
+        <option value="ru">RU</option>
+        <option value="kz">ҚЗ</option>
+        <option value="en">EN</option>
+    </select>
+    <span class="profile">👤 <span data-i18n="profile_button">Мой кабинет</span></span>
+  </div>
+</header>
+
+<!-- 👤 Профиль -->
+<section class="profile-section">
+  <img src="avatar.png" alt="avatar" class="avatar">
+  <div>
+    <h2>Иван Иванов</h2>
+    <p>📍 Общежитие №17</p>
+    <p>⭐ Рейтинг: 4.8</p>
+    <button class="edit-btn" data-i18n="edit_profile">Редактировать профиль</button>
+  </div>
+</section>
+
+<!-- ➕ Добавить объявление -->
+<section class="add-ad">
+  <div class="add-card">
+    <h3 data-i18n="add_ad_title">➕ Добавить объявление</h3>
+    <p data-i18n="add_ad_desc">Разместите новую вещь для продажи</p>
+    <button data-i18n="add_button">Добавить</button>
+  </div>
+</section>
+
+<!-- 📦 Мои объявления -->
+<section class="my-ads">
+  <h2 data-i18n="my_ads">Мои объявления</h2>
+
+  <div class="ads-grid">
+
+    <div class="ad-card">
+      <img src="microwave.jpg" alt="">
+      <h3>Микроволновка</h3>
+      <p class="price">8500 ₸</p>
+      <div class="actions">
+        <button class="edit">Редактировать</button>
+        <button class="delete">Удалить</button>
+      </div>
+    </div>
+
+    <div class="ad-card">
+      <img src="chair.jpg" alt="">
+      <h3>Стул складной</h3>
+      <p class="price">800 ₸</p>
+      <div class="actions">
+        <button class="edit">Редактировать</button>
+        <button class="delete">Удалить</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script src="script.js"></script>
+</body>
+</html>
