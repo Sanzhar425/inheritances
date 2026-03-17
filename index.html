@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Наследство</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="header">
+  <a href="index.html" class="logo">Наследство</a>
+  <div class="search-wrap">
+    <input type="text" id="searchInput" placeholder="Поиск товаров..." oninput="handleSearch()">
+  </div>
+  <nav class="nav">
+    <button class="nav-btn hide-tablet" onclick="openFilterModal()">🔔 Фильтр</button>
+    <button class="nav-btn hide-tablet" onclick="openFavoritesModal()">
+      ❤️ Избранное <span class="fav-badge" id="favCount">0</span>
+    </button>
+    <select class="lang-sel hide-tablet">
+      <option>RU</option><option>ҚЗ</option><option>EN</option>
+    </select>
+    <a href="profile.html" class="cabinet-btn">👤 Мой кабинет</a>
+    <button class="burger" onclick="openMobileNav()" aria-label="Меню">☰</button>
+  </nav>
+</header>
+
+<!-- ===== MOBILE DRAWER ===== -->
+<div class="mobile-nav" id="mobileNav">
+  <div class="mobile-nav-overlay" onclick="closeMobileNav()"></div>
+  <div class="mobile-nav-panel">
+    <div class="mobile-nav-header">
+      <span>Меню</span>
+      <button class="close-nav" onclick="closeMobileNav()">✕</button>
+    </div>
+    <input class="mobile-search" type="text" placeholder="Поиск..." oninput="handleSearchMobile(this.value)">
+    <a href="profile.html" class="mobile-nav-item green">👤 Мой кабинет</a>
+    <button class="mobile-nav-item" onclick="openFavoritesModal();closeMobileNav()">
+      ❤️ Избранное <span class="fav-badge" id="favCountMobile">0</span>
+    </button>
+    <button class="mobile-nav-item" onclick="openFilterModal();closeMobileNav()">⚙️ Фильтр</button>
+    <button class="mobile-nav-item sell-item" onclick="openCreateModal();closeMobileNav()">➕ Продать вещь</button>
+  </div>
+</div>
+
+<!-- ===== MAIN ===== -->
+<main class="container">
+  <h1 class="page-title">Все объявления</h1>
+
+  <div class="categories-card">
+    <button class="cat-btn active" data-cat="all"       onclick="filterCat(this,'all')">      <span class="icon">🏠</span>Все</button>
+    <button class="cat-btn"        data-cat="tech"      onclick="filterCat(this,'tech')">     <span class="icon">🫖</span>Техника</button>
+    <button class="cat-btn"        data-cat="books"     onclick="filterCat(this,'books')">    <span class="icon">📚</span>Учебники</button>
+    <button class="cat-btn"        data-cat="furniture" onclick="filterCat(this,'furniture')"><span class="icon">🛋️</span>Мебель</button>
+    <button class="cat-btn sell"                        onclick="openCreateModal()">          <span class="icon">➕</span>Продать</button>
+  </div>
+
+  <div class="listings-grid" id="listingsGrid"></div>
+</main>
+
+<!-- ===== PRODUCT MODAL ===== -->
+<div class="modal-overlay" id="productModal">
+  <div class="product-modal">
+    <div style="position:relative;">
+      <button onclick="closeModals()" class="pm-back-btn">←</button>
+      <img id="pmImage" src="" class="pm-img" alt="">
+    </div>
+    <div class="pm-body">
+      <div id="pmPrice" class="pm-price"></div>
+      <div id="pmTitle" class="pm-title"></div>
+      <div id="pmDesc"  style="font-size:14px;color:#555;margin-bottom:14px;line-height:1.5;"></div>
+      <div class="pm-seller">
+        <img id="pmAvatar" src="https://i.pravatar.cc/80?u=1" alt="">
+        <div>
+          <div id="pmSellerName" class="pm-seller-name"></div>
+          <div class="pm-verified">
+            <span class="pm-verified-dot">✓</span>Верифицирован через Stud.ID
+          </div>
+        </div>
+      </div>
+      <div class="pm-loc">📍 <span id="pmLocation"></span></div>
+      <button class="btn-wa" id="pmWhatsapp">💬 Написать в WhatsApp</button>
+      <button class="btn-res" id="pmFavBtn" onclick="toggleFavFromModal()">🤍 В избранное</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CREATE MODAL ===== -->
+<div class="modal-overlay" id="createModal">
+  <div class="modal">
+    <h2>➕ Новое объявление</h2>
+    <label>Название</label>
+    <input type="text" id="createTitle" placeholder="Название товара">
+    <label>Цена (₸)</label>
+    <input type="number" id="createPrice" placeholder="Например: 5000">
+    <label>Категория</label>
+    <select id="createCat">
+      <option value="tech">🫖 Техника</option>
+      <option value="books">📚 Учебники</option>
+      <option value="furniture">🛋️ Мебель</option>
+    </select>
+    <label>Описание</label>
+    <textarea id="createDesc" placeholder="Краткое описание..."></textarea>
+    <label>Ссылка на фото (необязательно)</label>
+    <input type="text" id="createImg" placeholder="https://...">
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModals()">Отмена</button>
+      <button class="btn-primary" onclick="createListing()">Опубликовать</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== FILTER MODAL ===== -->
+<div class="modal-overlay" id="filterModal">
+  <div class="modal" style="max-width:380px;">
+    <h2>⚙️ Фильтр</h2>
+    <label>Цена до (₸)</label>
+    <input type="number" id="filterMax" placeholder="Максимальная цена">
+    <label>Категория</label>
+    <select id="filterCatSel">
+      <option value="all">Все категории</option>
+      <option value="tech">Техника</option>
+      <option value="books">Учебники</option>
+      <option value="furniture">Мебель</option>
+    </select>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="clearFilters()">Очистить</button>
+      <button class="btn-primary" onclick="applyFilter()">Применить</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== FAVORITES MODAL ===== -->
+<div class="modal-overlay" id="favModal">
+  <div class="fav-modal">
+    <div class="fav-modal-header">
+      <h2>❤️ Избранное</h2>
+      <button class="close-x" onclick="closeModals()">✕</button>
+    </div>
+    <div class="fav-modal-body">
+      <div class="listings-grid fav-grid" id="favGrid"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="db.js"></script>
+<script>
+  // ── Инициализация ──────────────────────────────────
+  DB.init();
+
+  let activeFilter = { cat: 'all', maxPrice: null, search: '' };
+  let currentProductId = null;
+
+  // ── Рендер карточек ────────────────────────────────
+  function cardHTML(item) {
+    const isFav = DB.isFavorite(item.id);
+    const user  = DB.getUser();
+    return `
+      <div class="listing-card" onclick="openProduct(${item.id})">
+        <div class="card-img-wrap">
+          <img src="${item.image || 'https://via.placeholder.com/400x300?text=Нет+фото'}"
+               alt="${item.title}" class="card-img"
+               onerror="this.src='https://via.placeholder.com/400x300?text=Нет+фото'">
+          ${item.status === 'sold' ? '<div class="card-badge sold">Продано</div>' : ''}
+          <button class="fav-btn" onclick="toggleFav(event,${item.id})" title="Избранное">
+            ${isFav ? '❤️' : '🤍'}
+          </button>
+        </div>
+        <div class="card-body">
+          <div class="card-price">${item.price.toLocaleString('ru')} ₸</div>
+          <div class="card-title">${item.title}</div>
+          <div class="card-meta">
+            <span>👁️ ${item.views}</span>
+            <span>📦 ${DB.getCategoryName(item.category)}</span>
+          </div>
+          <div class="card-seller">
+            <img src="https://i.pravatar.cc/60?u=${item.userId}" class="card-avatar" alt="">
+            <div>
+              <div class="card-seller-name">${user?.name || 'Продавец'}</div>
+              <div class="card-seller-loc">📍 ${user?.location || ''}</div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  function render() {
+    const data = DB.getListings(activeFilter);
+    document.getElementById('listingsGrid').innerHTML = data.length
+      ? data.map(cardHTML).join('')
+      : '<div class="empty-state"><span class="empty-icon">🔍</span>Ничего не найдено</div>';
+    const n = DB.getFavorites().length;
+    document.getElementById('favCount').textContent = n;
+    document.getElementById('favCountMobile').textContent = n;
+  }
+
+  // ── Категории ──────────────────────────────────────
+  function filterCat(btn, cat) {
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeFilter.cat = cat;
+    render();
+  }
+
+  // ── Поиск ──────────────────────────────────────────
+  function handleSearch() {
+    activeFilter.search = document.getElementById('searchInput').value;
+    render();
+  }
+  function handleSearchMobile(v) { activeFilter.search = v; render(); }
+
+  // ── Фильтр ─────────────────────────────────────────
+  function openFilterModal() { document.getElementById('filterModal').classList.add('open'); }
+  function applyFilter() {
+    const max = document.getElementById('filterMax').value;
+    activeFilter.maxPrice = max ? parseInt(max) : null;
+    activeFilter.cat = document.getElementById('filterCatSel').value;
+    closeModals(); render(); showToast('✅ Фильтр применён');
+  }
+  function clearFilters() {
+    activeFilter = { cat: 'all', maxPrice: null, search: '' };
+    document.getElementById('filterMax').value = '';
+    document.getElementById('filterCatSel').value = 'all';
+    document.getElementById('searchInput').value = '';
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector('[data-cat="all"]').classList.add('active');
+    closeModals(); render(); showToast('🧹 Фильтр сброшен');
+  }
+
+  // ── Избранное ──────────────────────────────────────
+  function toggleFav(e, id) {
+    e.stopPropagation();
+    const added = DB.toggleFavorite(id);
+    showToast(added ? '❤️ Добавлено в избранное' : 'Удалено из избранного');
+    render();
+    // обновить кнопку в модалке если открыта
+    if (currentProductId === id) updateFavBtn(id);
+  }
+
+  function toggleFavFromModal() {
+    if (!currentProductId) return;
+    const added = DB.toggleFavorite(currentProductId);
+    showToast(added ? '❤️ Добавлено в избранное' : 'Удалено из избранного');
+    updateFavBtn(currentProductId);
+    render();
+  }
+
+  function updateFavBtn(id) {
+    const btn = document.getElementById('pmFavBtn');
+    if (btn) btn.textContent = DB.isFavorite(id) ? '❤️ В избранном' : '🤍 В избранное';
+  }
+
+  function openFavoritesModal() {
+    const items = DB.getFavoriteListings();
+    document.getElementById('favGrid').innerHTML = items.length
+      ? items.map(i => `
+          <div class="listing-card" onclick="openProduct(${i.id});closeModals();">
+            <div class="card-img-wrap">
+              <img src="${i.image || 'https://via.placeholder.com/400x200'}" class="card-img" alt="">
+              ${i.status === 'sold' ? '<div class="card-badge sold">Продано</div>' : ''}
+            </div>
+            <div class="card-body">
+              <div class="card-price">${i.price.toLocaleString('ru')} ₸</div>
+              <div class="card-title">${i.title}</div>
+            </div>
+          </div>`).join('')
+      : '<div class="empty-state"><span class="empty-icon">🤍</span>Избранных нет</div>';
+    document.getElementById('favModal').classList.add('open');
+  }
+
+  // ── Карточка товара ────────────────────────────────
+  function openProduct(id) {
+    const item = DB.getListing(id);
+    if (!item) return;
+    DB.incrementViews(id);
+    currentProductId = id;
+    const user = DB.getUser();
+
+    document.getElementById('pmImage').src     = item.image || 'https://via.placeholder.com/520x240?text=Нет+фото';
+    document.getElementById('pmTitle').textContent  = item.title;
+    document.getElementById('pmPrice').textContent  = item.price.toLocaleString('ru') + ' ₸';
+    document.getElementById('pmDesc').textContent   = item.description || '';
+    document.getElementById('pmSellerName').textContent = user?.name || 'Продавец';
+    document.getElementById('pmAvatar').src      = `https://i.pravatar.cc/80?u=${item.userId}`;
+    document.getElementById('pmLocation').textContent = (user?.location || '') + ', самовывоз до 22:00';
+    document.getElementById('pmWhatsapp').onclick = () =>
+      window.open(`https://wa.me/?text=Здравствуйте! Интересует товар: «${item.title}» за ${item.price} ₸`, '_blank');
+    updateFavBtn(id);
+    document.getElementById('productModal').classList.add('open');
+    render(); // обновить счётчик просмотров на карточке
+  }
+
+  // ── Создать объявление ─────────────────────────────
+  function openCreateModal() { document.getElementById('createModal').classList.add('open'); }
+  function createListing() {
+    const title = document.getElementById('createTitle').value.trim();
+    const price = parseInt(document.getElementById('createPrice').value);
+    if (!title || !price) { showToast('⚠️ Заполните название и цену'); return; }
+    DB.addListing({
+      title, price,
+      category:    document.getElementById('createCat').value,
+      description: document.getElementById('createDesc').value.trim(),
+      image:       document.getElementById('createImg').value.trim() ||
+                   'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=300&fit=crop',
+    });
+    closeModals(); render(); showToast('✅ Объявление опубликовано!');
+    ['createTitle','createPrice','createDesc','createImg'].forEach(id => document.getElementById(id).value = '');
+  }
+
+  // ── Утилиты ────────────────────────────────────────
+  function closeModals() {
+    document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('open'));
+  }
+  document.querySelectorAll('.modal-overlay').forEach(o =>
+    o.addEventListener('click', e => { if (e.target === o) closeModals(); })
+  );
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModals(); });
+
+  function openMobileNav()  { document.getElementById('mobileNav').classList.add('open'); }
+  function closeMobileNav() { document.getElementById('mobileNav').classList.remove('open'); }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2400);
+  }
+
+  // ── Старт ──────────────────────────────────────────
+  render();
+</script>
+</body>
+</html>

@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Личный кабинет — Наследство</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="header">
+  <a href="index.html" class="logo">Наследство</a>
+  <div class="search-wrap">
+    <input type="text" placeholder="Поиск...">
+  </div>
+  <nav class="nav">
+    <button class="nav-btn hide-tablet" onclick="openMsgModal()">
+      💬 Сообщения
+      <span class="fav-badge" id="msgBadge" style="display:none">0</span>
+    </button>
+    <select class="lang-sel hide-tablet"><option>RU</option><option>ҚЗ</option><option>EN</option></select>
+    <a href="index.html" class="cabinet-btn">🏠 На главную</a>
+    <button class="burger" onclick="openMN()">☰</button>
+  </nav>
+</header>
+
+<!-- ===== MOBILE NAV ===== -->
+<div class="mobile-nav" id="mobileNav">
+  <div class="mn-overlay" onclick="closeMN()"></div>
+  <div class="mn-panel">
+    <div class="mn-head"><span>Меню</span><button class="close-nav" onclick="closeMN()">✕</button></div>
+    <a href="index.html" class="mn-item">🏠 Главная</a>
+    <button class="mn-item active-page">👤 Личный кабинет</button>
+    <button class="mn-item" onclick="openMsgModal();closeMN()">💬 Сообщения</button>
+  </div>
+</div>
+
+<!-- ===== PAGE ===== -->
+<div class="page-wrap">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="profile-card" id="profileCard">
+      <!-- заполняется JS -->
+    </div>
+    <div class="add-section">
+      <div class="add-icon">➕</div>
+      <div class="add-title">Добавить объявление</div>
+      <button class="add-new-btn" onclick="openCreateModal()">+ Добавить</button>
+      <div class="add-info">Для новых объявлений нажмите «Добавить».</div>
+    </div>
+  </aside>
+
+  <!-- Content -->
+  <div class="content">
+    <h1 class="content-title">Мой кабинет</h1>
+
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab(event,'listings')">Объявления</button>
+      <button class="tab"        onclick="switchTab(event,'messages')">
+        Сообщения
+        <span id="tabMsgBadge" class="fav-badge" style="display:none;margin-left:4px;">0</span>
+      </button>
+      <button class="tab"        onclick="switchTab(event,'favorites')">Избранное</button>
+    </div>
+
+    <div id="tab-listings"></div>
+    <div id="tab-messages"  style="display:none;"></div>
+    <div id="tab-favorites" style="display:none;"></div>
+  </div>
+</div>
+
+<!-- ===== EDIT PROFILE MODAL ===== -->
+<div class="modal-overlay" id="editProfileModal">
+  <div class="modal">
+    <h2>✏️ Редактировать профиль</h2>
+    <label>Имя</label>
+    <input type="text" id="epName" placeholder="Ваше имя">
+    <label>Email</label>
+    <input type="email" id="epEmail" placeholder="Email">
+    <label>Местоположение</label>
+    <input type="text" id="epLocation" placeholder="Университет, Общежитие №...">
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModals()">Отмена</button>
+      <button class="btn-save"   onclick="saveProfile()">💾 Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== EDIT LISTING MODAL ===== -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal">
+    <h2>✏️ Редактировать объявление</h2>
+    <label>Название</label>
+    <input type="text" id="editTitle" placeholder="Название товара">
+    <label>Цена (₸)</label>
+    <input type="text" id="editPrice" placeholder="Например: 5 000">
+    <label>Описание</label>
+    <textarea id="editDesc" placeholder="Описание товара..."></textarea>
+    <label>Статус</label>
+    <select id="editStatus">
+      <option value="active">Активно</option>
+      <option value="sold">Продано</option>
+      <option value="archived">Архив</option>
+    </select>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModals()">Отмена</button>
+      <button class="btn-save"   onclick="saveListing()">💾 Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== DELETE MODAL ===== -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="confirm-modal">
+    <span class="icon">🗑️</span>
+    <h2>Удалить объявление?</h2>
+    <p id="deleteText">Это действие нельзя отменить.</p>
+    <div style="display:flex;gap:10px;justify-content:center;">
+      <button class="btn-cancel" onclick="closeModals()">Отмена</button>
+      <button class="btn-del"    onclick="confirmDelete()">Удалить</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CREATE LISTING MODAL ===== -->
+<div class="modal-overlay" id="createModal">
+  <div class="modal">
+    <h2>➕ Новое объявление</h2>
+    <label>Название</label>
+    <input type="text" id="createTitle" placeholder="Название товара">
+    <label>Цена (₸)</label>
+    <input type="number" id="createPrice" placeholder="Например: 5000">
+    <label>Категория</label>
+    <select id="createCat">
+      <option value="tech">🫖 Техника</option>
+      <option value="books">📚 Учебники</option>
+      <option value="furniture">🛋️ Мебель</option>
+    </select>
+    <label>Описание</label>
+    <textarea id="createDesc" placeholder="Краткое описание..."></textarea>
+    <label>Ссылка на фото (необязательно)</label>
+    <input type="text" id="createImg" placeholder="https://...">
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModals()">Отмена</button>
+      <button class="btn-primary" onclick="createListing()">Опубликовать</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MESSAGES MODAL ===== -->
+<div class="modal-overlay" id="msgModal">
+  <div class="fav-modal">
+    <div class="fav-modal-header">
+      <h2>💬 Сообщения</h2>
+      <button class="close-x" onclick="closeModals()">✕</button>
+    </div>
+    <div class="fav-modal-body" id="msgList"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="db.js"></script>
+<script>
+  DB.init();
+
+  let currentListingId = null;
+
+  // ── Профиль ────────────────────────────────────────
+  function renderProfile() {
+    const u = DB.getUser();
+    if (!u) return;
+    document.getElementById('profileCard').innerHTML = `
+      <img src="${u.avatar || `https://i.pravatar.cc/120?u=${u.id}`}"
+           alt="avatar" class="profile-avatar">
+      <div class="profile-info">
+        <div class="profile-name">${u.name}</div>
+        <div class="profile-loc">📍 ${u.location || '—'}</div>
+        <div class="profile-rating">⭐ ${u.rating.toFixed(1)} <span>(${u.reviews} отзывов)</span></div>
+        <button class="edit-profile-btn" onclick="openEditProfile()">✏️ Редактировать профиль</button>
+      </div>`;
+  }
+
+  function openEditProfile() {
+    const u = DB.getUser();
+    document.getElementById('epName').value     = u.name || '';
+    document.getElementById('epEmail').value    = u.email || '';
+    document.getElementById('epLocation').value = u.location || '';
+    document.getElementById('editProfileModal').classList.add('open');
+  }
+
+  function saveProfile() {
+    const name     = document.getElementById('epName').value.trim();
+    const email    = document.getElementById('epEmail').value.trim();
+    const location = document.getElementById('epLocation').value.trim();
+    if (!name) { showToast('⚠️ Введите имя'); return; }
+    DB.saveUser({ name, email, location });
+    closeModals();
+    renderProfile();
+    showToast('✅ Профиль сохранён');
+  }
+
+  // ── Вкладки ────────────────────────────────────────
+  function switchTab(e, name) {
+    ['listings','messages','favorites'].forEach(t => {
+      document.getElementById('tab-' + t).style.display = t === name ? 'block' : 'none';
+    });
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    e.target.classList.add('active');
+    if (name === 'listings')  renderListings();
+    if (name === 'messages')  renderMessages();
+    if (name === 'favorites') renderFavorites();
+  }
+
+  // ── Мои объявления ─────────────────────────────────
+  function renderListings() {
+    const myId    = DB.getUser()?.id;
+    const all     = DB.getListings({ status: 'all' }).filter(l => l.userId === myId);
+    const el      = document.getElementById('tab-listings');
+    if (!all.length) {
+      el.innerHTML = '<div class="tab-empty">📭 Объявлений пока нет.<br>Нажмите «Добавить», чтобы создать первое.</div>';
+      return;
+    }
+    el.innerHTML = all.map(item => `
+      <div class="listing-item" id="li-${item.id}">
+        <div class="listing-img-wrap">
+          <img src="${item.image || 'https://via.placeholder.com/200x200?text=Нет+фото'}"
+               alt="" class="listing-img"
+               onerror="this.src='https://via.placeholder.com/200x200?text=Нет+фото'">
+          ${item.status === 'sold' ? '<div class="listing-badge">Продано</div>' : ''}
+          ${item.status === 'archived' ? '<div class="listing-badge" style="background:#94a3b8">Архив</div>' : ''}
+        </div>
+        <div class="listing-info">
+          <div>
+            <div class="listing-title">${item.title}</div>
+            <div class="listing-price">${item.price.toLocaleString('ru')} ₸</div>
+            <div class="listing-meta">
+              <span>👁️ ${item.views}</span>
+              <span>📦 ${DB.getCategoryName(item.category)}</span>
+              <span>📅 ${new Date(item.createdAt).toLocaleDateString('ru')}</span>
+            </div>
+          </div>
+          <div class="listing-actions">
+            <button class="edit-btn"   onclick="openEdit(${item.id})">✏️ Редактировать</button>
+            <button class="delete-btn" onclick="openDelete(${item.id},'${item.title.replace(/'/g,"\\'")}')">🗑️ Удалить</button>
+          </div>
+        </div>
+      </div>`).join('');
+  }
+
+  // ── Редактировать объявление ───────────────────────
+  function openEdit(id) {
+    const item = DB.getListing(id);
+    if (!item) return;
+    currentListingId = id;
+    document.getElementById('editTitle').value  = item.title;
+    document.getElementById('editPrice').value  = item.price;
+    document.getElementById('editDesc').value   = item.description || '';
+    document.getElementById('editStatus').value = item.status;
+    document.getElementById('editModal').classList.add('open');
+  }
+
+  function saveListing() {
+    const title  = document.getElementById('editTitle').value.trim();
+    const price  = parseInt(document.getElementById('editPrice').value);
+    const desc   = document.getElementById('editDesc').value.trim();
+    const status = document.getElementById('editStatus').value;
+    if (!title || !price) { showToast('⚠️ Заполните все поля'); return; }
+    DB.updateListing(currentListingId, { title, price, description: desc, status });
+    closeModals();
+    renderListings();
+    showToast('✅ Сохранено');
+  }
+
+  // ── Удалить объявление ─────────────────────────────
+  function openDelete(id, title) {
+    currentListingId = id;
+    document.getElementById('deleteText').textContent = `Удалить «${title}»? Это нельзя отменить.`;
+    document.getElementById('deleteModal').classList.add('open');
+  }
+
+  function confirmDelete() {
+    const el = document.getElementById(`li-${currentListingId}`);
+    if (el) {
+      el.style.transition = 'opacity 0.3s, transform 0.3s';
+      el.style.opacity = '0'; el.style.transform = 'translateX(16px)';
+      setTimeout(() => { DB.deleteListing(currentListingId); renderListings(); }, 300);
+    }
+    closeModals(); showToast('🗑️ Удалено');
+  }
+
+  // ── Создать объявление ─────────────────────────────
+  function openCreateModal() { document.getElementById('createModal').classList.add('open'); }
+  function createListing() {
+    const title = document.getElementById('createTitle').value.trim();
+    const price = parseInt(document.getElementById('createPrice').value);
+    if (!title || !price) { showToast('⚠️ Заполните название и цену'); return; }
+    DB.addListing({
+      title, price,
+      category:    document.getElementById('createCat').value,
+      description: document.getElementById('createDesc').value.trim(),
+      image:       document.getElementById('createImg').value.trim() ||
+                   'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=300&fit=crop',
+    });
+    closeModals();
+    renderListings();
+    showToast('✅ Объявление опубликовано!');
+    ['createTitle','createPrice','createDesc','createImg'].forEach(id => document.getElementById(id).value = '');
+  }
+
+  // ── Избранное ──────────────────────────────────────
+  function renderFavorites() {
+    const items = DB.getFavoriteListings();
+    const el    = document.getElementById('tab-favorites');
+    if (!items.length) {
+      el.innerHTML = '<div class="tab-empty">🤍 Избранных объявлений нет</div>';
+      return;
+    }
+    el.innerHTML = `<div class="listings-grid" style="margin-top:4px;">${
+      items.map(i => `
+        <div class="listing-card" onclick="window.location='index.html'">
+          <div class="card-img-wrap">
+            <img src="${i.image || 'https://via.placeholder.com/400x200'}" class="card-img" alt="">
+            ${i.status === 'sold' ? '<div class="card-badge sold">Продано</div>' : ''}
+          </div>
+          <div class="card-body">
+            <div class="card-price">${i.price.toLocaleString('ru')} ₸</div>
+            <div class="card-title">${i.title}</div>
+          </div>
+        </div>`).join('')
+    }</div>`;
+  }
+
+  // ── Сообщения ──────────────────────────────────────
+  function renderMessages() {
+    const msgs = DB.getMessages();
+    const el   = document.getElementById('tab-messages');
+    if (!msgs.length) {
+      el.innerHTML = '<div class="tab-empty">💬 Сообщений пока нет</div>';
+      return;
+    }
+    el.innerHTML = msgs.map(m => `
+      <div class="listing-item" style="${m.read ? '' : 'border-left:3px solid var(--green);'}">
+        <div style="font-size:28px;flex-shrink:0;">💬</div>
+        <div class="listing-info">
+          <div>
+            <div class="listing-title">${m.fromName}</div>
+            <div style="font-size:13px;color:#555;margin-bottom:6px;">${m.text}</div>
+            <div class="listing-meta"><span>📅 ${new Date(m.createdAt).toLocaleString('ru')}</span></div>
+          </div>
+          ${!m.read ? `<div class="listing-actions"><button class="edit-btn" onclick="DB.markRead(${m.id});renderMessages();updateMsgBadge()">✓ Прочитано</button></div>` : ''}
+        </div>
+      </div>`).join('');
+  }
+
+  function openMsgModal() {
+    const msgs = DB.getMessages();
+    document.getElementById('msgList').innerHTML = msgs.length
+      ? msgs.map(m => `
+          <div class="listing-item">
+            <div style="font-size:24px;flex-shrink:0;">💬</div>
+            <div class="listing-info">
+              <div class="listing-title">${m.fromName}</div>
+              <div style="font-size:13px;color:#555;">${m.text}</div>
+              <div class="listing-meta"><span>${new Date(m.createdAt).toLocaleString('ru')}</span></div>
+            </div>
+          </div>`).join('')
+      : '<div class="empty-state"><span class="empty-icon">💬</span>Сообщений нет</div>';
+    document.getElementById('msgModal').classList.add('open');
+  }
+
+  function updateMsgBadge() {
+    const n = DB.unreadCount();
+    const badge1 = document.getElementById('msgBadge');
+    const badge2 = document.getElementById('tabMsgBadge');
+    [badge1, badge2].forEach(b => {
+      if (!b) return;
+      b.textContent = n;
+      b.style.display = n > 0 ? 'inline' : 'none';
+    });
+  }
+
+  // ── Утилиты ────────────────────────────────────────
+  function closeModals() {
+    document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('open'));
+  }
+  document.querySelectorAll('.modal-overlay').forEach(o =>
+    o.addEventListener('click', e => { if (e.target === o) closeModals(); })
+  );
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModals(); });
+
+  function openMN()  { document.getElementById('mobileNav').classList.add('open'); }
+  function closeMN() { document.getElementById('mobileNav').classList.remove('open'); }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2400);
+  }
+
+  // ── Старт ──────────────────────────────────────────
+  renderProfile();
+  renderListings();
+  updateMsgBadge();
+</script>
+</body>
+</html>
