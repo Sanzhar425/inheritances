@@ -36,16 +36,14 @@
 </div>
 
 <main class="container">
-  <h1 class="page-title">Все объявления</h1>
-  <div class="categories-card">
-    <button class="cat-btn active" data-cat="all"       onclick="filterCat(this,'all')">      <span class="icon">🏠</span>Все</button>
-    <button class="cat-btn"        data-cat="tech"      onclick="filterCat(this,'tech')">     <span class="icon">🫖</span>Техника</button>
-    <button class="cat-btn"        data-cat="books"     onclick="filterCat(this,'books')">    <span class="icon">📚</span>Учебники</button>
-    <button class="cat-btn"        data-cat="furniture" onclick="filterCat(this,'furniture')"><span class="icon">🛋️</span>Мебель</button>
-    <button class="cat-btn sell"                        onclick="openCreateModal()">          <span class="icon">➕</span>Продать</button>
-  </div>
   <div class="listings-grid" id="listingsGrid"></div>
 </main>
+
+<!-- FAB: кнопка Продать -->
+<button class="fab-sell" onclick="openCreateModal()" title="Продать вещь">
+  <span class="fab-icon">＋</span>
+  <span class="fab-text">Продать</span>
+</button>
 
 <!-- PRODUCT MODAL -->
 <div class="modal-overlay" id="productModal">
@@ -207,11 +205,6 @@ function render() {
   document.getElementById('favCountMobile').textContent = n;
 }
 
-function filterCat(btn, cat) {
-  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  activeFilter.cat = cat; render();
-}
 function handleSearch() { activeFilter.search = document.getElementById('searchInput').value; render(); }
 function handleSearchMobile(v) { activeFilter.search = v; render(); }
 function openFilterModal() { document.getElementById('filterModal').classList.add('open'); }
@@ -226,8 +219,6 @@ function clearFilters() {
   document.getElementById('filterMax').value = '';
   document.getElementById('filterCatSel').value = 'all';
   document.getElementById('searchInput').value = '';
-  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
-  document.querySelector('[data-cat="all"]').classList.add('active');
   closeModals(); render(); showToast('🧹 Фильтр сброшен');
 }
 function toggleFav(e, id) {
