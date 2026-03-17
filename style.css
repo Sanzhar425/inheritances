@@ -328,3 +328,54 @@ body {
   .listing-img { width: 60px; height: 60px; }
   .listing-actions { gap: 6px; }
 }
+
+/* ══════════════════════════════════════════
+   FAB — плавающая кнопка "Продать"
+══════════════════════════════════════════ */
+.fab-sell {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  z-index: 400;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #ff8c00;
+  color: white;
+  border: none;
+  border-radius: 999px;
+  padding: 14px 22px;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: var(--font);
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(255, 140, 0, 0.45);
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+}
+.fab-sell:hover {
+  background: #e67e00;
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 6px 28px rgba(255, 140, 0, 0.55);
+}
+.fab-sell:active {
+  transform: scale(0.97);
+}
+.fab-icon {
+  font-size: 20px;
+  line-height: 1;
+  font-weight: 400;
+}
+.fab-text {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+@media (max-width: 480px) {
+  .fab-sell {
+    bottom: 20px;
+    right: 20px;
+    padding: 13px 18px;
+    font-size: 14px;
+  }
+}
