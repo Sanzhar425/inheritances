@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Наследство — Вход</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --green: #2d7e32;
+      --green-light: #e8f5e9;
+      --green-dark: #1b5e20;
+      --red: #f43f5e;
+      --radius: 12px;
+      --font: 'Inter', sans-serif;
+    }
+    body {
+      font-family: var(--font);
+      min-height: 100vh;
+      background: linear-gradient(135deg, #c2e9fb, #a1c4fd);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+    }
+    .logo-link {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--green);
+      text-decoration: none;
+      margin-bottom: 24px;
+      display: block;
+      text-align: center;
+    }
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 36px 32px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.12);
+    }
+    .tabs {
+      display: flex;
+      background: #f3f4f6;
+      border-radius: 10px;
+      padding: 4px;
+      margin-bottom: 28px;
+      gap: 4px;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 7px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: var(--font);
+      background: transparent;
+      color: #6b7280;
+      transition: all 0.2s;
+    }
+    .tab-btn.active {
+      background: white;
+      color: #1f2937;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    }
+    .form-group { margin-bottom: 16px; }
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: #6b7280;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    input {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 9px;
+      font-size: 15px;
+      font-family: var(--font);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      color: #1f2937;
+    }
+    input:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(45,126,50,0.1); }
+    input.error { border-color: var(--red); }
+    .field-error {
+      font-size: 12px;
+      color: var(--red);
+      margin-top: 4px;
+      display: none;
+    }
+    .field-error.show { display: block; }
+    .submit-btn {
+      width: 100%;
+      padding: 13px;
+      background: var(--green);
+      color: white;
+      border: none;
+      border-radius: 9px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: var(--font);
+      margin-top: 6px;
+      transition: background 0.2s, transform 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .submit-btn:hover { background: var(--green-dark); }
+    .submit-btn:active { transform: scale(0.98); }
+    .submit-btn:disabled { background: #9ca3af; cursor: not-allowed; transform: none; }
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 20px 0;
+      color: #d1d5db;
+      font-size: 13px;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #e5e7eb;
+    }
+    .alert {
+      padding: 12px 14px;
+      border-radius: 9px;
+      font-size: 13px;
+      margin-bottom: 18px;
+      display: none;
+      line-height: 1.5;
+    }
+    .alert.show { display: block; }
+    .alert-error { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+    .alert-success { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+    .hint {
+      font-size: 12px;
+      color: #9ca3af;
+      text-align: center;
+      margin-top: 18px;
+      line-height: 1.6;
+    }
+    .hint a { color: var(--green); text-decoration: none; font-weight: 500; }
+    .spinner {
+      width: 18px; height: 18px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+    .submit-btn.loading .spinner { display: block; }
+    .submit-btn.loading .btn-text { display: none; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .lang-row {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .lang-pill {
+      padding: 5px 14px;
+      border-radius: 99px;
+      border: 1.5px solid #e5e7eb;
+      background: white;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: var(--font);
+      color: #6b7280;
+      transition: all 0.15s;
+    }
+    .lang-pill.active { border-color: var(--green); color: var(--green); background: var(--green-light); }
+    .setup-info {
+      background: #fffbeb;
+      border: 1px solid #fcd34d;
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 20px;
+      font-size: 13px;
+      color: #92400e;
+      line-height: 1.6;
+    }
+    .setup-info strong { display: block; margin-bottom: 4px; font-size: 14px; }
+    .setup-info code {
+      background: #fef3c7;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 12px;
+    }
+    @media (max-width: 480px) {
+      .card { padding: 28px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<a href="index.html" class="logo-link">Наследство</a>
+
+<div class="lang-row">
+  <button class="lang-pill" onclick="switchLang('RU')" id="pillRU">RU</button>
+  <button class="lang-pill" onclick="switchLang('KZ')" id="pillKZ">ҚЗ</button>
+  <button class="lang-pill" onclick="switchLang('EN')" id="pillEN">EN</button>
+</div>
+
+<div class="card">
+
+  <!-- ⚠️ Supabase setup notice -->
+  <div class="setup-info" id="setupInfo">
+    <strong>⚙️ Настройка Supabase</strong>
+    Замените в коде ниже:<br>
+    <code>YOUR_SUPABASE_URL</code> и <code>YOUR_SUPABASE_ANON_KEY</code><br>
+    на ваши данные из <a href="https://supabase.com/dashboard" target="_blank" style="color:#92400e">supabase.com/dashboard</a> → Settings → API
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('login')" id="tabLogin"></button>
+    <button class="tab-btn" onclick="showTab('register')" id="tabRegister"></button>
+  </div>
+
+  <div id="alertBox" class="alert"></div>
+
+  <!-- LOGIN -->
+  <div id="formLogin">
+    <div class="form-group">
+      <label id="lblLoginEmail"></label>
+      <input type="email" id="loginEmail" autocomplete="email">
+      <div class="field-error" id="errLoginEmail"></div>
+    </div>
+    <div class="form-group">
+      <label id="lblLoginPassword"></label>
+      <input type="password" id="loginPassword" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+      <div class="field-error" id="errLoginPassword"></div>
+    </div>
+    <button class="submit-btn" id="btnLogin" onclick="doLogin()">
+      <span class="btn-text" id="btnLoginText"></span>
+      <div class="spinner"></div>
+    </button>
+    <p class="hint" id="hintLogin"></p>
+  </div>
+
+  <!-- REGISTER -->
+  <div id="formRegister" style="display:none;">
+    <div class="form-group">
+      <label id="lblRegName"></label>
+      <input type="text" id="regName" autocomplete="name">
+      <div class="field-error" id="errRegName"></div>
+    </div>
+    <div class="form-group">
+      <label id="lblRegEmail"></label>
+      <input type="email" id="regEmail" autocomplete="email">
+      <div class="field-error" id="errRegEmail"></div>
+    </div>
+    <div class="form-group">
+      <label id="lblRegPassword"></label>
+      <input type="password" id="regPassword" autocomplete="new-password">
+      <div class="field-error" id="errRegPassword"></div>
+    </div>
+    <div class="form-group">
+      <label id="lblRegConfirm"></label>
+      <input type="password" id="regConfirm" autocomplete="new-password" onkeydown="if(event.key==='Enter')doRegister()">
+      <div class="field-error" id="errRegConfirm"></div>
+    </div>
+    <button class="submit-btn" id="btnRegister" onclick="doRegister()">
+      <span class="btn-text" id="btnRegisterText"></span>
+      <div class="spinner"></div>
+    </button>
+    <p class="hint" id="hintRegister"></p>
+  </div>
+
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// 🔧 SUPABASE CONFIG — замените на свои данные
+// ══════════════════════════════════════════
+const SUPABASE_URL  = 'YOUR_SUPABASE_URL';   // например: https://xxxx.supabase.co
+const SUPABASE_KEY  = 'YOUR_SUPABASE_ANON_KEY'; // ваш anon/public key
+
+// ══════════════════════════════════════════
+// ПЕРЕВОДЫ
+// ══════════════════════════════════════════
+const LANG = {
+  RU: {
+    tabLogin: 'Войти',
+    tabRegister: 'Регистрация',
+    email: 'Email',
+    password: 'Пароль',
+    name: 'Имя',
+    confirmPassword: 'Повторите пароль',
+    btnLogin: 'Войти',
+    btnRegister: 'Создать аккаунт',
+    hintLogin: 'Нет аккаунта? Зарегистрируйтесь.',
+    hintRegister: 'Уже есть аккаунт? Войдите.',
+    errEmailRequired: 'Введите email',
+    errEmailInvalid: 'Некорректный email',
+    errPasswordRequired: 'Введите пароль',
+    errPasswordShort: 'Минимум 6 символов',
+    errNameRequired: 'Введите имя',
+    errConfirmRequired: 'Повторите пароль',
+    errPasswordMismatch: 'Пароли не совпадают',
+    errInvalidCredentials: 'Неверный email или пароль',
+    errEmailTaken: 'Этот email уже зарегистрирован',
+    errNetwork: 'Ошибка сети. Проверьте подключение.',
+    errSupabaseNotConfigured: '⚙️ Supabase не настроен. Замените YOUR_SUPABASE_URL и YOUR_SUPABASE_ANON_KEY в коде.',
+    successRegister: '✅ Аккаунт создан! Проверьте email для подтверждения.',
+    successLogin: '✅ Вход выполнен! Перенаправляем...',
+  },
+  KZ: {
+    tabLogin: 'Кіру',
+    tabRegister: 'Тіркелу',
+    email: 'Email',
+    password: 'Құпия сөз',
+    name: 'Аты',
+    confirmPassword: 'Құпия сөзді қайталаңыз',
+    btnLogin: 'Кіру',
+    btnRegister: 'Аккаунт жасау',
+    hintLogin: 'Аккаунт жоқ па? Тіркеліңіз.',
+    hintRegister: 'Аккаунт бар ма? Кіріңіз.',
+    errEmailRequired: 'Email енгізіңіз',
+    errEmailInvalid: 'Қате email',
+    errPasswordRequired: 'Құпия сөз енгізіңіз',
+    errPasswordShort: 'Кемінде 6 таңба',
+    errNameRequired: 'Атыңызды енгізіңіз',
+    errConfirmRequired: 'Құпия сөзді қайталаңыз',
+    errPasswordMismatch: 'Құпия сөздер сәйкес емес',
+    errInvalidCredentials: 'Қате email немесе құпия сөз',
+    errEmailTaken: 'Бұл email тіркелген',
+    errNetwork: 'Желі қатесі. Байланысты тексеріңіз.',
+    errSupabaseNotConfigured: '⚙️ Supabase баптанбаған. YOUR_SUPABASE_URL және YOUR_SUPABASE_ANON_KEY ауыстырыңыз.',
+    successRegister: '✅ Аккаунт жасалды! Растау үшін emailді тексеріңіз.',
+    successLogin: '✅ Кірдіңіз! Бағыттауда...',
+  },
+  EN: {
+    tabLogin: 'Log in',
+    tabRegister: 'Register',
+    email: 'Email',
+    password: 'Password',
+    name: 'Name',
+    confirmPassword: 'Confirm password',
+    btnLogin: 'Log in',
+    btnRegister: 'Create account',
+    hintLogin: "Don't have an account? Sign up.",
+    hintRegister: 'Already have an account? Log in.',
+    errEmailRequired: 'Enter your email',
+    errEmailInvalid: 'Invalid email address',
+    errPasswordRequired: 'Enter your password',
+    errPasswordShort: 'At least 6 characters',
+    errNameRequired: 'Enter your name',
+    errConfirmRequired: 'Confirm your password',
+    errPasswordMismatch: 'Passwords do not match',
+    errInvalidCredentials: 'Incorrect email or password',
+    errEmailTaken: 'This email is already registered',
+    errNetwork: 'Network error. Check your connection.',
+    errSupabaseNotConfigured: '⚙️ Supabase is not configured. Replace YOUR_SUPABASE_URL and YOUR_SUPABASE_ANON_KEY in the code.',
+    successRegister: '✅ Account created! Check your email to confirm.',
+    successLogin: '✅ Logged in! Redirecting...',
+  }
+};
+
+let currentLang = localStorage.getItem('lang') || 'RU';
+function t(key) { return (LANG[currentLang] || LANG.RU)[key] || key; }
+
+function applyLang() {
+  document.getElementById('tabLogin').textContent     = t('tabLogin');
+  document.getElementById('tabRegister').textContent  = t('tabRegister');
+  document.getElementById('lblLoginEmail').textContent    = t('email');
+  document.getElementById('lblLoginPassword').textContent = t('password');
+  document.getElementById('btnLoginText').textContent     = t('btnLogin');
+  document.getElementById('hintLogin').textContent        = t('hintLogin');
+  document.getElementById('lblRegName').textContent       = t('name');
+  document.getElementById('lblRegEmail').textContent      = t('email');
+  document.getElementById('lblRegPassword').textContent   = t('password');
+  document.getElementById('lblRegConfirm').textContent    = t('confirmPassword');
+  document.getElementById('btnRegisterText').textContent  = t('btnRegister');
+  document.getElementById('hintRegister').textContent     = t('hintRegister');
+  ['pillRU','pillKZ','pillEN'].forEach(id => {
+    document.getElementById(id).classList.toggle('active', id === 'pill' + currentLang);
+  });
+}
+
+function switchLang(val) {
+  currentLang = val;
+  localStorage.setItem('lang', val);
+  applyLang();
+  clearAlert();
+  clearErrors();
+}
+
+// ══════════════════════════════════════════
+// SUPABASE CLIENT (без npm, через CDN)
+// ══════════════════════════════════════════
+let supabase = null;
+
+function initSupabase() {
+  if (SUPABASE_URL === 'YOUR_SUPABASE_URL' || SUPABASE_KEY === 'YOUR_SUPABASE_ANON_KEY') {
+    return false;
+  }
+  try {
+    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    return true;
+  } catch(e) {
+    return false;
+  }
+}
+
+// ══════════════════════════════════════════
+// UI HELPERS
+// ══════════════════════════════════════════
+function showTab(name) {
+  document.getElementById('formLogin').style.display    = name === 'login'    ? 'block' : 'none';
+  document.getElementById('formRegister').style.display = name === 'register' ? 'block' : 'none';
+  document.getElementById('tabLogin').classList.toggle('active',    name === 'login');
+  document.getElementById('tabRegister').classList.toggle('active', name === 'register');
+  clearAlert(); clearErrors();
+}
+
+function showAlert(msg, type = 'error') {
+  const el = document.getElementById('alertBox');
+  el.textContent = msg;
+  el.className = `alert alert-${type} show`;
+}
+function clearAlert() {
+  const el = document.getElementById('alertBox');
+  el.className = 'alert';
+  el.textContent = '';
+}
+
+function showFieldError(id, msg) {
+  const el = document.getElementById(id);
+  if (el) { el.textContent = msg; el.classList.add('show'); }
+}
+function clearErrors() {
+  document.querySelectorAll('.field-error').forEach(e => { e.classList.remove('show'); e.textContent = ''; });
+  document.querySelectorAll('input').forEach(e => e.classList.remove('error'));
+}
+
+function setLoading(btnId, loading) {
+  const btn = document.getElementById(btnId);
+  btn.classList.toggle('loading', loading);
+  btn.disabled = loading;
+}
+
+function fieldError(inputId, errId, msg) {
+  document.getElementById(inputId).classList.add('error');
+  showFieldError(errId, msg);
+}
+
+// ══════════════════════════════════════════
+// VALIDATION
+// ══════════════════════════════════════════
+function validateEmail(v) {
+  if (!v) return t('errEmailRequired');
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) return t('errEmailInvalid');
+  return null;
+}
+function validatePassword(v) {
+  if (!v) return t('errPasswordRequired');
+  if (v.length < 6) return t('errPasswordShort');
+  return null;
+}
+
+// ══════════════════════════════════════════
+// LOGIN
+// ══════════════════════════════════════════
+async function doLogin() {
+  clearAlert(); clearErrors();
+
+  const email    = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  let hasError   = false;
+
+  const emailErr = validateEmail(email);
+  if (emailErr) { fieldError('loginEmail', 'errLoginEmail', emailErr); hasError = true; }
+  const passErr = validatePassword(password);
+  if (passErr)  { fieldError('loginPassword', 'errLoginPassword', passErr); hasError = true; }
+  if (hasError) return;
+
+  if (!initSupabase()) {
+    showAlert(t('errSupabaseNotConfigured'));
+    return;
+  }
+
+  setLoading('btnLogin', true);
+  try {
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) {
+      if (error.message.includes('Invalid login')) showAlert(t('errInvalidCredentials'));
+      else showAlert(error.message);
+      return;
+    }
+    // Сохраняем пользователя
+    const user = data.user;
+    localStorage.setItem('current_user', JSON.stringify({
+      id: user.id,
+      email: user.email,
+      name: user.user_metadata?.name || email.split('@')[0],
+      location: user.user_metadata?.location || '',
+      avatar: null, rating: 5.0, reviews: 0, verified: false,
+    }));
+    showAlert(t('successLogin'), 'success');
+    setTimeout(() => { window.location.href = 'profile.html'; }, 1000);
+  } catch(e) {
+    showAlert(t('errNetwork'));
+  } finally {
+    setLoading('btnLogin', false);
+  }
+}
+
+// ══════════════════════════════════════════
+// REGISTER
+// ══════════════════════════════════════════
+async function doRegister() {
+  clearAlert(); clearErrors();
+
+  const name     = document.getElementById('regName').value.trim();
+  const email    = document.getElementById('regEmail').value.trim();
+  const password = document.getElementById('regPassword').value;
+  const confirm  = document.getElementById('regConfirm').value;
+  let hasError   = false;
+
+  if (!name)    { fieldError('regName', 'errRegName', t('errNameRequired')); hasError = true; }
+  const emailErr = validateEmail(email);
+  if (emailErr) { fieldError('regEmail', 'errRegEmail', emailErr); hasError = true; }
+  const passErr = validatePassword(password);
+  if (passErr)  { fieldError('regPassword', 'errRegPassword', passErr); hasError = true; }
+  if (!confirm) { fieldError('regConfirm', 'errRegConfirm', t('errConfirmRequired')); hasError = true; }
+  else if (password !== confirm) { fieldError('regConfirm', 'errRegConfirm', t('errPasswordMismatch')); hasError = true; }
+  if (hasError) return;
+
+  if (!initSupabase()) {
+    showAlert(t('errSupabaseNotConfigured'));
+    return;
+  }
+
+  setLoading('btnRegister', true);
+  try {
+    const { data, error } = await supabase.auth.signUp({
+      email, password,
+      options: { data: { name, location: '' } }
+    });
+    if (error) {
+      if (error.message.includes('already registered') || error.message.includes('already been registered')) {
+        showAlert(t('errEmailTaken'));
+      } else {
+        showAlert(error.message);
+      }
+      return;
+    }
+    showAlert(t('successRegister'), 'success');
+    // Если email confirmation отключён в Supabase — сразу редирект
+    if (data.session) {
+      const user = data.user;
+      localStorage.setItem('current_user', JSON.stringify({
+        id: user.id, email: user.email, name,
+        location: '', avatar: null, rating: 5.0, reviews: 0, verified: false,
+      }));
+      setTimeout(() => { window.location.href = 'profile.html'; }, 1200);
+    }
+  } catch(e) {
+    showAlert(t('errNetwork'));
+  } finally {
+    setLoading('btnRegister', false);
+  }
+}
+
+applyLang();
+</script>
+
+<!-- Supabase JS SDK через CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+
+</body>
+</html>
