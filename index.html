@@ -12,13 +12,17 @@
 <header class="header">
   <a href="index.html" class="logo">Наследство</a>
   <div class="search-wrap">
-    <input type="text" id="searchInput" placeholder="Поиск товаров..." oninput="handleSearch()">
+    <input type="text" id="searchInput" oninput="handleSearch()">
   </div>
   <nav class="nav">
-    <button class="nav-btn hide-tablet" onclick="openFilterModal()">🔔 Фильтр</button>
-    <button class="nav-btn hide-tablet" onclick="openFavoritesModal()">❤️ Избранное <span class="fav-badge" id="favCount">0</span></button>
-    <select class="lang-sel hide-tablet"><option>RU</option><option>ҚЗ</option><option>EN</option></select>
-    <a href="profile.html" class="cabinet-btn">👤 Мой кабинет</a>
+    <button class="nav-btn hide-tablet" onclick="openFilterModal()" id="btnFilter"></button>
+    <button class="nav-btn hide-tablet" onclick="openFavoritesModal()" id="btnFavNav">❤️ <span id="favNavLabel"></span> <span class="fav-badge" id="favCount">0</span></button>
+    <select class="lang-sel hide-tablet" onchange="switchLang(this.value)" id="langSelDesktop">
+      <option value="RU">RU</option>
+      <option value="KZ">ҚЗ</option>
+      <option value="EN">EN</option>
+    </select>
+    <a href="profile.html" class="cabinet-btn" id="btnCabinet"></a>
     <button class="burger" onclick="openMobileNav()">☰</button>
   </nav>
 </header>
@@ -26,12 +30,20 @@
 <div class="mobile-nav" id="mobileNav">
   <div class="mobile-nav-overlay" onclick="closeMobileNav()"></div>
   <div class="mobile-nav-panel">
-    <div class="mobile-nav-header"><span>Меню</span><button class="close-nav" onclick="closeMobileNav()">✕</button></div>
-    <input class="mobile-search" type="text" placeholder="Поиск..." oninput="handleSearchMobile(this.value)">
-    <a href="profile.html" class="mobile-nav-item green">👤 Мой кабинет</a>
-    <button class="mobile-nav-item" onclick="openFavoritesModal();closeMobileNav()">❤️ Избранное <span class="fav-badge" id="favCountMobile">0</span></button>
-    <button class="mobile-nav-item" onclick="openFilterModal();closeMobileNav()">⚙️ Фильтр</button>
-    <button class="mobile-nav-item sell-item" onclick="openCreateModal();closeMobileNav()">➕ Продать вещь</button>
+    <div class="mobile-nav-header"><span id="mnMenuLabel"></span><button class="close-nav" onclick="closeMobileNav()">✕</button></div>
+    <input class="mobile-search" type="text" id="mobileSearchInput" oninput="handleSearchMobile(this.value)">
+    <a href="profile.html" class="mobile-nav-item green" id="mnCabinet"></a>
+    <button class="mobile-nav-item" onclick="openFavoritesModal();closeMobileNav()">❤️ <span id="mnFavLabel"></span> <span class="fav-badge" id="favCountMobile">0</span></button>
+    <button class="mobile-nav-item" onclick="openFilterModal();closeMobileNav()" id="mnFilter"></button>
+    <button class="mobile-nav-item sell-item" onclick="openCreateModal();closeMobileNav()" id="mnSell"></button>
+    <div style="margin-top:10px;padding-top:10px;border-top:1px solid #eee;">
+      <label style="font-size:12px;color:#999;display:block;margin-bottom:6px;" id="mnLangLabel"></label>
+      <select class="lang-sel" onchange="switchLang(this.value)" id="langSelMobile" style="width:100%;">
+        <option value="RU">RU — Русский</option>
+        <option value="KZ">ҚЗ — Қазақша</option>
+        <option value="EN">EN — English</option>
+      </select>
+    </div>
   </div>
 </div>
 
@@ -39,10 +51,9 @@
   <div class="listings-grid" id="listingsGrid"></div>
 </main>
 
-<!-- FAB: кнопка Продать -->
-<button class="fab-sell" onclick="openCreateModal()" title="Продать вещь">
+<button class="fab-sell" onclick="openCreateModal()" title="">
   <span class="fab-icon">＋</span>
-  <span class="fab-text">Продать</span>
+  <span class="fab-text" id="fabText"></span>
 </button>
 
 <!-- PRODUCT MODAL -->
@@ -60,12 +71,12 @@
         <img id="pmAvatar" src="" alt="">
         <div>
           <div id="pmSellerName" class="pm-seller-name"></div>
-          <div class="pm-verified"><span class="pm-verified-dot">✓</span>Верифицирован через Stud.ID</div>
+          <div class="pm-verified"><span class="pm-verified-dot">✓</span><span id="pmVerifiedLabel"></span></div>
         </div>
       </div>
       <div class="pm-loc">📍 <span id="pmLocation"></span></div>
-      <button class="btn-wa" id="pmWhatsapp">💬 Написать в WhatsApp</button>
-      <button class="btn-res" id="pmFavBtn" onclick="toggleFavFromModal()">🤍 В избранное</button>
+      <button class="btn-wa" id="pmWhatsapp"></button>
+      <button class="btn-res" id="pmFavBtn" onclick="toggleFavFromModal()"></button>
     </div>
   </div>
 </div>
@@ -73,20 +84,20 @@
 <!-- CREATE MODAL -->
 <div class="modal-overlay" id="createModal">
   <div class="modal">
-    <h2>➕ Новое объявление</h2>
-    <label>Название</label><input type="text" id="createTitle" placeholder="Название товара">
-    <label>Цена (₸)</label><input type="number" id="createPrice" placeholder="Например: 5000">
-    <label>Категория</label>
+    <h2 id="createModalTitle"></h2>
+    <label id="lblCreateName"></label><input type="text" id="createTitle">
+    <label id="lblCreatePrice"></label><input type="number" id="createPrice">
+    <label id="lblCreateCat"></label>
     <select id="createCat">
-      <option value="tech">🫖 Техника</option>
-      <option value="books">📚 Учебники</option>
-      <option value="furniture">🛋️ Мебель</option>
+      <option value="tech" id="optTech"></option>
+      <option value="books" id="optBooks"></option>
+      <option value="furniture" id="optFurniture"></option>
     </select>
-    <label>Описание</label><textarea id="createDesc" placeholder="Краткое описание..."></textarea>
-    <label>Ссылка на фото (необязательно)</label><input type="text" id="createImg" placeholder="https://...">
+    <label id="lblCreateDesc"></label><textarea id="createDesc"></textarea>
+    <label id="lblCreatePhoto"></label><input type="text" id="createImg" placeholder="https://...">
     <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeModals()">Отмена</button>
-      <button class="btn-primary" onclick="createListing()">Опубликовать</button>
+      <button class="btn-cancel" onclick="closeModals()" id="btnCreateCancel"></button>
+      <button class="btn-primary" onclick="createListing()" id="btnPublish"></button>
     </div>
   </div>
 </div>
@@ -94,18 +105,18 @@
 <!-- FILTER MODAL -->
 <div class="modal-overlay" id="filterModal">
   <div class="modal" style="max-width:380px;">
-    <h2>⚙️ Фильтр</h2>
-    <label>Цена до (₸)</label><input type="number" id="filterMax" placeholder="Максимальная цена">
-    <label>Категория</label>
+    <h2 id="filterModalTitle"></h2>
+    <label id="lblFilterPrice"></label><input type="number" id="filterMax">
+    <label id="lblFilterCat"></label>
     <select id="filterCatSel">
-      <option value="all">Все категории</option>
-      <option value="tech">Техника</option>
-      <option value="books">Учебники</option>
-      <option value="furniture">Мебель</option>
+      <option value="all" id="optFilterAll"></option>
+      <option value="tech" id="optFilterTech"></option>
+      <option value="books" id="optFilterBooks"></option>
+      <option value="furniture" id="optFilterFurniture"></option>
     </select>
     <div class="modal-actions">
-      <button class="btn-cancel" onclick="clearFilters()">Очистить</button>
-      <button class="btn-primary" onclick="applyFilter()">Применить</button>
+      <button class="btn-cancel" onclick="clearFilters()" id="btnClearFilter"></button>
+      <button class="btn-primary" onclick="applyFilter()" id="btnApplyFilter"></button>
     </div>
   </div>
 </div>
@@ -113,7 +124,7 @@
 <!-- FAVORITES MODAL -->
 <div class="modal-overlay" id="favModal">
   <div class="fav-modal">
-    <div class="fav-modal-header"><h2>❤️ Избранное</h2><button class="close-x" onclick="closeModals()">✕</button></div>
+    <div class="fav-modal-header"><h2 id="favModalTitle"></h2><button class="close-x" onclick="closeModals()">✕</button></div>
     <div class="fav-modal-body"><div class="listings-grid fav-grid" id="favGrid"></div></div>
   </div>
 </div>
@@ -121,14 +132,210 @@
 <div class="toast" id="toast"></div>
 
 <script>
-// ══════════════════════════════════════════
-// DB — localStorage
-// ══════════════════════════════════════════
+const LANG = {
+  RU: {
+    searchPlaceholder: 'Поиск товаров...',
+    filter: '🔔 Фильтр',
+    favorites: 'Избранное',
+    cabinet: '👤 Мой кабинет',
+    sell: 'Продать',
+    sold: 'Продано',
+    notFound: 'Ничего не найдено',
+    noFavs: 'Избранных нет',
+    filterTitle: '⚙️ Фильтр',
+    priceUpTo: 'Цена до (₸)',
+    allCats: 'Все категории',
+    tech: '🫖 Техника',
+    books: '📚 Учебники',
+    furniture: '🛋️ Мебель',
+    clearFilter: 'Очистить',
+    applyFilter: 'Применить',
+    filterApplied: '✅ Фильтр применён',
+    filterCleared: '🧹 Фильтр сброшен',
+    newListing: '➕ Новое объявление',
+    nameLabel: 'Название',
+    namePlaceholder: 'Название товара',
+    priceLabel: 'Цена (₸)',
+    pricePlaceholder: 'Например: 5000',
+    categoryLabel: 'Категория',
+    descLabel: 'Описание',
+    descPlaceholder: 'Краткое описание...',
+    photoLabel: 'Ссылка на фото (необязательно)',
+    cancel: 'Отмена',
+    publish: 'Опубликовать',
+    fillFields: '⚠️ Заполните название и цену',
+    published: '✅ Опубликовано!',
+    addedFav: '❤️ Добавлено в избранное',
+    removedFav: 'Удалено из избранного',
+    inFav: '❤️ В избранном',
+    toFav: '🤍 В избранное',
+    whatsapp: '💬 Написать в WhatsApp',
+    seller: 'Продавец',
+    pickup: ', самовывоз до 22:00',
+    verified: 'Верифицирован через Stud.ID',
+    menu: 'Меню',
+    language: 'Язык',
+    sellMobile: '➕ Продать вещь',
+    favModalTitle: '❤️ Избранное',
+  },
+  KZ: {
+    searchPlaceholder: 'Тауарларды іздеу...',
+    filter: '🔔 Сүзгі',
+    favorites: 'Таңдаулылар',
+    cabinet: '👤 Менің кабинетім',
+    sell: 'Сату',
+    sold: 'Сатылды',
+    notFound: 'Ештеңе табылмады',
+    noFavs: 'Таңдаулылар жоқ',
+    filterTitle: '⚙️ Сүзгі',
+    priceUpTo: 'Бағасы дейін (₸)',
+    allCats: 'Барлық санаттар',
+    tech: '🫖 Техника',
+    books: '📚 Оқулықтар',
+    furniture: '🛋️ Жиhаз',
+    clearFilter: 'Тазалау',
+    applyFilter: 'Қолдану',
+    filterApplied: '✅ Сүзгі қолданылды',
+    filterCleared: '🧹 Сүзгі тазаланды',
+    newListing: '➕ Жаңа хабарландыру',
+    nameLabel: 'Атауы',
+    namePlaceholder: 'Тауардың атауы',
+    priceLabel: 'Бағасы (₸)',
+    pricePlaceholder: 'Мысалы: 5000',
+    categoryLabel: 'Санат',
+    descLabel: 'Сипаттама',
+    descPlaceholder: 'Қысқаша сипаттама...',
+    photoLabel: 'Фото сілтемесі (міндетті емес)',
+    cancel: 'Болдырмау',
+    publish: 'Жариялау',
+    fillFields: '⚠️ Атауы мен бағасын толтырыңыз',
+    published: '✅ Жарияланды!',
+    addedFav: '❤️ Таңдаулыларға қосылды',
+    removedFav: 'Таңдаулылардан алынды',
+    inFav: '❤️ Таңдаулыларда',
+    toFav: '🤍 Таңдаулыларға',
+    whatsapp: '💬 WhatsApp-та жазу',
+    seller: 'Сатушы',
+    pickup: ', 22:00-ге дейін алу',
+    verified: 'Stud.ID арқылы расталған',
+    menu: 'Мәзір',
+    language: 'Тіл',
+    sellMobile: '➕ Зат сату',
+    favModalTitle: '❤️ Таңдаулылар',
+  },
+  EN: {
+    searchPlaceholder: 'Search items...',
+    filter: '🔔 Filter',
+    favorites: 'Favorites',
+    cabinet: '👤 My Account',
+    sell: 'Sell',
+    sold: 'Sold',
+    notFound: 'Nothing found',
+    noFavs: 'No favorites yet',
+    filterTitle: '⚙️ Filter',
+    priceUpTo: 'Max price (₸)',
+    allCats: 'All categories',
+    tech: '🫖 Electronics',
+    books: '📚 Textbooks',
+    furniture: '🛋️ Furniture',
+    clearFilter: 'Clear',
+    applyFilter: 'Apply',
+    filterApplied: '✅ Filter applied',
+    filterCleared: '🧹 Filter cleared',
+    newListing: '➕ New listing',
+    nameLabel: 'Title',
+    namePlaceholder: 'Item name',
+    priceLabel: 'Price (₸)',
+    pricePlaceholder: 'E.g. 5000',
+    categoryLabel: 'Category',
+    descLabel: 'Description',
+    descPlaceholder: 'Short description...',
+    photoLabel: 'Photo URL (optional)',
+    cancel: 'Cancel',
+    publish: 'Publish',
+    fillFields: '⚠️ Fill in title and price',
+    published: '✅ Published!',
+    addedFav: '❤️ Added to favorites',
+    removedFav: 'Removed from favorites',
+    inFav: '❤️ In favorites',
+    toFav: '🤍 Add to favorites',
+    whatsapp: '💬 Message on WhatsApp',
+    seller: 'Seller',
+    pickup: ', pickup until 10 PM',
+    verified: 'Verified via Stud.ID',
+    menu: 'Menu',
+    language: 'Language',
+    sellMobile: '➕ Sell an item',
+    favModalTitle: '❤️ Favorites',
+  }
+};
+
+let currentLang = localStorage.getItem('lang') || 'RU';
+
+function t(key) {
+  return (LANG[currentLang] || LANG.RU)[key] || key;
+}
+
+function applyLang() {
+  document.getElementById('searchInput').placeholder = t('searchPlaceholder');
+  const mobileSearch = document.getElementById('mobileSearchInput');
+  if (mobileSearch) mobileSearch.placeholder = t('searchPlaceholder');
+
+  document.getElementById('btnFilter').textContent = t('filter');
+  document.getElementById('btnFavNav').innerHTML = `❤️ ${t('favorites')} <span class="fav-badge" id="favCount">${DB.getFavorites().length}</span>`;
+  document.getElementById('btnCabinet').textContent = t('cabinet');
+  document.getElementById('fabText').textContent = t('sell');
+
+  document.getElementById('mnMenuLabel').textContent = t('menu');
+  document.getElementById('mnCabinet').textContent = t('cabinet');
+  document.getElementById('mnFavLabel').textContent = t('favorites');
+  document.getElementById('mnFilter').textContent = t('filter');
+  document.getElementById('mnSell').textContent = t('sellMobile');
+  document.getElementById('mnLangLabel').textContent = t('language');
+
+  document.getElementById('createModalTitle').textContent = t('newListing');
+  document.getElementById('lblCreateName').textContent = t('nameLabel');
+  document.getElementById('createTitle').placeholder = t('namePlaceholder');
+  document.getElementById('lblCreatePrice').textContent = t('priceLabel');
+  document.getElementById('createPrice').placeholder = t('pricePlaceholder');
+  document.getElementById('lblCreateCat').textContent = t('categoryLabel');
+  document.getElementById('optTech').textContent = t('tech');
+  document.getElementById('optBooks').textContent = t('books');
+  document.getElementById('optFurniture').textContent = t('furniture');
+  document.getElementById('lblCreateDesc').textContent = t('descLabel');
+  document.getElementById('createDesc').placeholder = t('descPlaceholder');
+  document.getElementById('lblCreatePhoto').textContent = t('photoLabel');
+  document.getElementById('btnCreateCancel').textContent = t('cancel');
+  document.getElementById('btnPublish').textContent = t('publish');
+
+  document.getElementById('filterModalTitle').textContent = t('filterTitle');
+  document.getElementById('lblFilterPrice').textContent = t('priceUpTo');
+  document.getElementById('optFilterAll').textContent = t('allCats');
+  document.getElementById('optFilterTech').textContent = t('tech');
+  document.getElementById('optFilterBooks').textContent = t('books');
+  document.getElementById('optFilterFurniture').textContent = t('furniture');
+  document.getElementById('lblFilterCat').textContent = t('categoryLabel');
+  document.getElementById('btnClearFilter').textContent = t('clearFilter');
+  document.getElementById('btnApplyFilter').textContent = t('applyFilter');
+
+  document.getElementById('favModalTitle').textContent = t('favModalTitle');
+
+  document.getElementById('langSelDesktop').value = currentLang;
+  document.getElementById('langSelMobile').value = currentLang;
+
+  render();
+}
+
+function switchLang(val) {
+  currentLang = val;
+  localStorage.setItem('lang', val);
+  applyLang();
+}
+
 const DB = {
   _get(k) { try { return JSON.parse(localStorage.getItem(k)) ?? null; } catch { return null; } },
   _set(k,v) { localStorage.setItem(k, JSON.stringify(v)); },
   _id() { return Date.now() + Math.floor(Math.random() * 1000); },
-
   init() {
     if (this._get('db_v2')) return;
     const userId = this._id();
@@ -166,12 +373,12 @@ const DB = {
   toggleFavorite(id) { const f=this.getFavorites(); const n=f.includes(id)?f.filter(x=>x!==id):[...f,id]; this._set('favorites',n); return n.includes(id); },
   getFavoriteListings() { const f=this.getFavorites(); return (this._get('listings')??[]).filter(l=>f.includes(l.id)); },
   getMessages() { return this._get('messages')??[]; },
-  getCategoryName(id) { return {tech:'Техника',books:'Учебники',furniture:'Мебель'}[id]??id; },
+  getCategoryName(id) {
+    const map = { tech: 'tech', books: 'books', furniture: 'furniture' };
+    return t(map[id]) || id;
+  },
 };
 
-// ══════════════════════════════════════════
-// APP
-// ══════════════════════════════════════════
 DB.init();
 let activeFilter = { cat:'all', maxPrice:null, search:'' };
 let currentProductId = null;
@@ -181,8 +388,8 @@ function cardHTML(item) {
   const user = DB.getUser();
   return `<div class="listing-card" onclick="openProduct(${item.id})">
     <div class="card-img-wrap">
-      <img src="${item.image||'https://via.placeholder.com/400x300?text=Нет+фото'}" alt="${item.title}" class="card-img" onerror="this.src='https://via.placeholder.com/400x300?text=Нет+фото'">
-      ${item.status==='sold'?'<div class="card-badge sold">Продано</div>':''}
+      <img src="${item.image||'https://via.placeholder.com/400x300?text=No+photo'}" alt="${item.title}" class="card-img" onerror="this.src='https://via.placeholder.com/400x300?text=No+photo'">
+      ${item.status==='sold'?`<div class="card-badge sold">${t('sold')}</div>`:''}
       <button class="fav-btn" onclick="toggleFav(event,${item.id})">${isFav?'❤️':'🤍'}</button>
     </div>
     <div class="card-body">
@@ -191,7 +398,7 @@ function cardHTML(item) {
       <div class="card-meta"><span>👁️ ${item.views}</span><span>📦 ${DB.getCategoryName(item.category)}</span></div>
       <div class="card-seller">
         <img src="https://i.pravatar.cc/60?u=${item.userId}" class="card-avatar" alt="">
-        <div><div class="card-seller-name">${user?.name||'Продавец'}</div><div class="card-seller-loc">📍 ${user?.location||''}</div></div>
+        <div><div class="card-seller-name">${user?.name||t('seller')}</div><div class="card-seller-loc">📍 ${user?.location||''}</div></div>
       </div>
     </div>
   </div>`;
@@ -199,77 +406,98 @@ function cardHTML(item) {
 
 function render() {
   const data = DB.getListings(activeFilter);
-  document.getElementById('listingsGrid').innerHTML = data.length ? data.map(cardHTML).join('') : '<div class="empty-state"><span class="empty-icon">🔍</span>Ничего не найдено</div>';
+  document.getElementById('listingsGrid').innerHTML = data.length
+    ? data.map(cardHTML).join('')
+    : `<div class="empty-state"><span class="empty-icon">🔍</span>${t('notFound')}</div>`;
   const n = DB.getFavorites().length;
-  document.getElementById('favCount').textContent = n;
-  document.getElementById('favCountMobile').textContent = n;
+  const fc = document.getElementById('favCount');
+  const fcm = document.getElementById('favCountMobile');
+  if (fc) fc.textContent = n;
+  if (fcm) fcm.textContent = n;
 }
 
 function handleSearch() { activeFilter.search = document.getElementById('searchInput').value; render(); }
 function handleSearchMobile(v) { activeFilter.search = v; render(); }
+
 function openFilterModal() { document.getElementById('filterModal').classList.add('open'); }
 function applyFilter() {
   const max = document.getElementById('filterMax').value;
   activeFilter.maxPrice = max ? parseInt(max) : null;
   activeFilter.cat = document.getElementById('filterCatSel').value;
-  closeModals(); render(); showToast('✅ Фильтр применён');
+  closeModals(); render(); showToast(t('filterApplied'));
 }
 function clearFilters() {
   activeFilter = {cat:'all',maxPrice:null,search:''};
   document.getElementById('filterMax').value = '';
   document.getElementById('filterCatSel').value = 'all';
   document.getElementById('searchInput').value = '';
-  closeModals(); render(); showToast('🧹 Фильтр сброшен');
+  closeModals(); render(); showToast(t('filterCleared'));
 }
+
 function toggleFav(e, id) {
   e.stopPropagation();
   const added = DB.toggleFavorite(id);
-  showToast(added?'❤️ Добавлено в избранное':'Удалено из избранного');
+  showToast(added ? t('addedFav') : t('removedFav'));
   render();
   if (currentProductId===id) updateFavBtn(id);
 }
 function toggleFavFromModal() {
   if (!currentProductId) return;
   const added = DB.toggleFavorite(currentProductId);
-  showToast(added?'❤️ Добавлено':'Удалено из избранного');
+  showToast(added ? t('addedFav') : t('removedFav'));
   updateFavBtn(currentProductId); render();
 }
 function updateFavBtn(id) {
   const btn = document.getElementById('pmFavBtn');
-  if (btn) btn.textContent = DB.isFavorite(id)?'❤️ В избранном':'🤍 В избранное';
+  if (btn) btn.textContent = DB.isFavorite(id) ? t('inFav') : t('toFav');
 }
+
 function openFavoritesModal() {
   const items = DB.getFavoriteListings();
   document.getElementById('favGrid').innerHTML = items.length
-    ? items.map(i=>`<div class="listing-card" onclick="openProduct(${i.id});closeModals();"><div class="card-img-wrap"><img src="${i.image||'https://via.placeholder.com/400x200'}" class="card-img" alt="">${i.status==='sold'?'<div class="card-badge sold">Продано</div>':''}</div><div class="card-body"><div class="card-price">${i.price.toLocaleString('ru')} ₸</div><div class="card-title">${i.title}</div></div></div>`).join('')
-    : '<div class="empty-state"><span class="empty-icon">🤍</span>Избранных нет</div>';
+    ? items.map(i=>`<div class="listing-card" onclick="openProduct(${i.id});closeModals();">
+        <div class="card-img-wrap">
+          <img src="${i.image||'https://via.placeholder.com/400x200'}" class="card-img" alt="">
+          ${i.status==='sold'?`<div class="card-badge sold">${t('sold')}</div>`:''}
+        </div>
+        <div class="card-body">
+          <div class="card-price">${i.price.toLocaleString('ru')} ₸</div>
+          <div class="card-title">${i.title}</div>
+        </div>
+      </div>`).join('')
+    : `<div class="empty-state"><span class="empty-icon">🤍</span>${t('noFavs')}</div>`;
   document.getElementById('favModal').classList.add('open');
 }
+
 function openProduct(id) {
   const item = DB.getListing(id); if (!item) return;
   DB.incrementViews(id); currentProductId = id;
   const user = DB.getUser();
-  document.getElementById('pmImage').src = item.image||'https://via.placeholder.com/520x240?text=Нет+фото';
+  document.getElementById('pmImage').src = item.image||'https://via.placeholder.com/520x240?text=No+photo';
   document.getElementById('pmTitle').textContent = item.title;
   document.getElementById('pmPrice').textContent = item.price.toLocaleString('ru')+' ₸';
   document.getElementById('pmDesc').textContent = item.description||'';
-  document.getElementById('pmSellerName').textContent = user?.name||'Продавец';
+  document.getElementById('pmSellerName').textContent = user?.name||t('seller');
   document.getElementById('pmAvatar').src = `https://i.pravatar.cc/80?u=${item.userId}`;
-  document.getElementById('pmLocation').textContent = (user?.location||'')+', самовывоз до 22:00';
-  document.getElementById('pmWhatsapp').onclick = ()=>window.open(`https://wa.me/?text=Здравствуйте! Интересует: «${item.title}» за ${item.price} ₸`,'_blank');
+  document.getElementById('pmLocation').textContent = (user?.location||'')+t('pickup');
+  document.getElementById('pmVerifiedLabel').textContent = t('verified');
+  document.getElementById('pmWhatsapp').textContent = t('whatsapp');
+  document.getElementById('pmWhatsapp').onclick = ()=>window.open(`https://wa.me/?text=${encodeURIComponent(item.title+' — '+item.price+' ₸')}`, '_blank');
   updateFavBtn(id);
   document.getElementById('productModal').classList.add('open');
   render();
 }
+
 function openCreateModal() { document.getElementById('createModal').classList.add('open'); }
 function createListing() {
   const title = document.getElementById('createTitle').value.trim();
   const price = parseInt(document.getElementById('createPrice').value);
-  if (!title||!price) { showToast('⚠️ Заполните название и цену'); return; }
+  if (!title||!price) { showToast(t('fillFields')); return; }
   DB.addListing({ title, price, category: document.getElementById('createCat').value, description: document.getElementById('createDesc').value.trim(), image: document.getElementById('createImg').value.trim()||'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=300&fit=crop' });
-  closeModals(); render(); showToast('✅ Опубликовано!');
+  closeModals(); render(); showToast(t('published'));
   ['createTitle','createPrice','createDesc','createImg'].forEach(id=>document.getElementById(id).value='');
 }
+
 function closeModals() { document.querySelectorAll('.modal-overlay').forEach(m=>m.classList.remove('open')); }
 document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)closeModals();}));
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModals();});
@@ -277,7 +505,7 @@ function openMobileNav() { document.getElementById('mobileNav').classList.add('o
 function closeMobileNav() { document.getElementById('mobileNav').classList.remove('open'); }
 function showToast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2400); }
 
-render();
+applyLang();
 </script>
 </body>
 </html>
