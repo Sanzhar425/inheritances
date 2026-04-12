@@ -32,6 +32,7 @@
     <button class="mn-item active-page" id="mnCabinet"></button>
     <button class="mn-item" onclick="openMsgModal();closeMN()" id="mnMessages"></button>
     <button class="mn-item" onclick="openCreateModal();closeMN()" style="background:#fff8f0;color:#e65100;" id="mnAddListing"></button>
+    <button class="mn-item" onclick="openLogoutModal();closeMN()" style="background:#fff0f0;color:#e53935;" id="mnLogout"></button>
     <div style="margin-top:10px;padding-top:10px;border-top:1px solid #eee;">
       <label style="font-size:12px;color:#999;display:block;margin-bottom:6px;" id="mnLangLabel"></label>
       <select class="lang-sel" onchange="switchLang(this.value)" id="langSelMobile" style="width:100%;">
@@ -143,6 +144,19 @@
   </div>
 </div>
 
+<!-- LOGOUT -->
+<div class="modal-overlay" id="logoutModal">
+  <div class="confirm-modal">
+    <span class="icon">🚪</span>
+    <h2 id="logoutTitle"></h2>
+    <p id="logoutText"></p>
+    <div style="display:flex;gap:10px;justify-content:center;">
+      <button class="btn-cancel" onclick="closeModals()" id="btnLogoutCancel"></button>
+      <button class="btn-del" onclick="confirmLogout()" id="btnLogoutConfirm"></button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -208,6 +222,11 @@ const LANG = {
     verified: '✅ Верифицирован',
     namePlaceholder: 'Название товара',
     pricePlaceholder: 'Например: 5000',
+    logout: '🚪 Выйти',
+    logoutTitle: 'Выйти из аккаунта?',
+    logoutText: 'Вы уверены, что хотите выйти?',
+    logoutConfirm: 'Выйти',
+    logoutDone: '👋 Вы вышли из аккаунта',
   },
   KZ: {
     search: 'Іздеу...',
@@ -270,6 +289,11 @@ const LANG = {
     verified: '✅ Расталған',
     namePlaceholder: 'Тауардың атауы',
     pricePlaceholder: 'Мысалы: 5000',
+    logout: '🚪 Шығу',
+    logoutTitle: 'Аккаунттан шығу?',
+    logoutText: 'Шынымен шығқыңыз келе ме?',
+    logoutConfirm: 'Шығу',
+    logoutDone: '👋 Аккаунттан шықтыңыз',
   },
   EN: {
     search: 'Search...',
@@ -332,6 +356,11 @@ const LANG = {
     verified: '✅ Verified',
     namePlaceholder: 'Item name',
     pricePlaceholder: 'E.g. 5000',
+    logout: '🚪 Log out',
+    logoutTitle: 'Log out?',
+    logoutText: 'Are you sure you want to log out?',
+    logoutConfirm: 'Log out',
+    logoutDone: '👋 You have been logged out',
   }
 };
 
@@ -347,6 +376,7 @@ function applyLang() {
   document.getElementById('mnCabinet').textContent = t('cabinet');
   document.getElementById('mnMessages').textContent = t('messages');
   document.getElementById('mnAddListing').textContent = t('addListing');
+  document.getElementById('mnLogout').textContent = t('logout');
   document.getElementById('mnLangLabel').textContent = t('language');
   document.getElementById('addSectionTitle').textContent = t('addSectionTitle');
   document.getElementById('btnAddNew').textContent = t('addNew');
@@ -378,6 +408,11 @@ function applyLang() {
   document.getElementById('deleteTitle').textContent = t('deleteTitle');
   document.getElementById('btnDeleteCancel').textContent = t('cancel');
   document.getElementById('btnDeleteConfirm').textContent = t('deleteBtn');
+
+  document.getElementById('logoutTitle').textContent = t('logoutTitle');
+  document.getElementById('logoutText').textContent = t('logoutText');
+  document.getElementById('btnLogoutCancel').textContent = t('cancel');
+  document.getElementById('btnLogoutConfirm').textContent = t('logoutConfirm');
 
   document.getElementById('createModalTitle').textContent = t('newListing');
   document.getElementById('lblCreateName').textContent = t('titleLabel');
@@ -455,7 +490,8 @@ function renderProfile() {
     <div class="profile-name">${u.name}</div>
     <div class="profile-loc">📍 ${u.location||'—'}</div>
     <div class="profile-rating">⭐ ${u.rating.toFixed(1)} <span>(${u.reviews} ${t('reviews')})</span></div>
-    <button class="edit-profile-btn" onclick="openEditProfile()">${t('editProfile')}</button>`;
+    <button class="edit-profile-btn" onclick="openEditProfile()">${t('editProfile')}</button>
+    <button class="edit-profile-btn" onclick="openLogoutModal()" style="margin-top:8px;border-color:#f43f5e;color:#f43f5e;">${t('logout')}</button>`;
 }
 
 function openEditProfile() {
@@ -605,6 +641,18 @@ function updateMsgBadge() {
   const n = DB.unreadCount();
   const badge = document.getElementById('tabMsgBadge');
   if (badge) { badge.textContent=n; badge.style.display=n>0?'inline':'none'; }
+}
+
+function openLogoutModal() { document.getElementById('logoutModal').classList.add('open'); }
+function confirmLogout() {
+  localStorage.removeItem('db_v2');
+  localStorage.removeItem('current_user');
+  localStorage.removeItem('listings');
+  localStorage.removeItem('favorites');
+  localStorage.removeItem('messages');
+  closeModals();
+  showToast(t('logoutDone'));
+  setTimeout(() => { window.location.href = 'index.html'; }, 1200);
 }
 
 function closeModals() { document.querySelectorAll('.modal-overlay').forEach(m=>m.classList.remove('open')); }
