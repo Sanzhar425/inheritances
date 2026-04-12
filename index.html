@@ -6,6 +6,19 @@
   <title>Наследство</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <style>
+    .auth-btns { display: flex; gap: 8px; align-items: center; }
+    .btn-login { background: white; color: #2d7e32; padding: 8px 16px; border-radius: 999px; border: 1.5px solid #2d7e32; font-weight: 600; font-size: 14px; cursor: pointer; font-family: 'Inter', sans-serif; transition: background 0.15s; white-space: nowrap; }
+    .btn-login:hover { background: #e8f5e9; }
+    .btn-register { background: #2d7e32; color: white; padding: 8px 16px; border-radius: 999px; border: 1.5px solid #2d7e32; font-weight: 600; font-size: 14px; cursor: pointer; font-family: 'Inter', sans-serif; transition: background 0.15s; white-space: nowrap; }
+    .btn-register:hover { background: #1b5e20; }
+    .modal input { margin-bottom: 4px; }
+    .field-error { font-size: 11px; color: #f43f5e; margin-bottom: 8px; display: none; }
+    .field-error.show { display: block; }
+    .auth-switch { text-align: center; font-size: 13px; color: #666; margin-top: 16px; }
+    .auth-switch a { color: #2d7e32; font-weight: 600; cursor: pointer; text-decoration: none; }
+    .auth-switch a:hover { text-decoration: underline; }
+  </style>
 </head>
 <body>
 
@@ -22,7 +35,11 @@
       <option value="KZ">ҚЗ</option>
       <option value="EN">EN</option>
     </select>
-    <a href="profile.html" class="cabinet-btn" id="btnCabinet"></a>
+    <div class="auth-btns hide-tablet" id="guestButtons">
+      <button class="btn-login" onclick="openLoginModal()" id="btnLogin"></button>
+      <button class="btn-register" onclick="openRegisterModal()" id="btnRegister"></button>
+    </div>
+    <a href="profile.html" class="cabinet-btn" id="btnCabinet" style="display:none;"></a>
     <button class="burger" onclick="openMobileNav()">☰</button>
   </nav>
 </header>
@@ -32,7 +49,11 @@
   <div class="mobile-nav-panel">
     <div class="mobile-nav-header"><span id="mnMenuLabel"></span><button class="close-nav" onclick="closeMobileNav()">✕</button></div>
     <input class="mobile-search" type="text" id="mobileSearchInput" oninput="handleSearchMobile(this.value)">
-    <a href="profile.html" class="mobile-nav-item green" id="mnCabinet"></a>
+    <div id="mnAuthSection">
+      <button class="mobile-nav-item" onclick="openLoginModal();closeMobileNav()" id="mnLogin" style="background:#e8f5e9;color:#2d7e32;"></button>
+      <button class="mobile-nav-item" onclick="openRegisterModal();closeMobileNav()" id="mnRegister" style="background:#2d7e32;color:white;"></button>
+    </div>
+    <a href="profile.html" class="mobile-nav-item green" id="mnCabinet" style="display:none;"></a>
     <button class="mobile-nav-item" onclick="openFavoritesModal();closeMobileNav()">❤️ <span id="mnFavLabel"></span> <span class="fav-badge" id="favCountMobile">0</span></button>
     <button class="mobile-nav-item" onclick="openFilterModal();closeMobileNav()" id="mnFilter"></button>
     <button class="mobile-nav-item sell-item" onclick="openCreateModal();closeMobileNav()" id="mnSell"></button>
@@ -78,6 +99,48 @@
       <button class="btn-wa" id="pmWhatsapp"></button>
       <button class="btn-res" id="pmFavBtn" onclick="toggleFavFromModal()"></button>
     </div>
+  </div>
+</div>
+
+<!-- LOGIN MODAL -->
+<div class="modal-overlay" id="loginModal">
+  <div class="modal">
+    <h2 id="loginTitle"></h2>
+    <label id="lblLoginEmail"></label>
+    <input type="email" id="loginEmail" autocomplete="email">
+    <div class="field-error" id="loginEmailErr"></div>
+    <label id="lblLoginPassword"></label>
+    <input type="password" id="loginPassword" autocomplete="current-password">
+    <div class="field-error" id="loginPasswordErr"></div>
+    <div class="field-error" id="loginGeneralErr"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModals()" id="btnLoginCancel"></button>
+      <button class="btn-primary" onclick="doLogin()" id="btnLoginSubmit"></button>
+    </div>
+    <div class="auth-switch" id="loginSwitch"></div>
+  </div>
+</div>
+
+<!-- REGISTER MODAL -->
+<div class="modal-overlay" id="registerModal">
+  <div class="modal">
+    <h2 id="registerTitle"></h2>
+    <label id="lblRegName"></label>
+    <input type="text" id="regName" autocomplete="name">
+    <div class="field-error" id="regNameErr"></div>
+    <label id="lblRegEmail"></label>
+    <input type="email" id="regEmail" autocomplete="email">
+    <div class="field-error" id="regEmailErr"></div>
+    <label id="lblRegPassword"></label>
+    <input type="password" id="regPassword" autocomplete="new-password">
+    <div class="field-error" id="regPasswordErr"></div>
+    <label id="lblRegLocation"></label>
+    <input type="text" id="regLocation">
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModals()" id="btnRegCancel"></button>
+      <button class="btn-primary" onclick="doRegister()" id="btnRegSubmit"></button>
+    </div>
+    <div class="auth-switch" id="registerSwitch"></div>
   </div>
 </div>
 
@@ -134,165 +197,178 @@
 <script>
 const LANG = {
   RU: {
-    searchPlaceholder: 'Поиск товаров...',
-    filter: '🔔 Фильтр',
-    favorites: 'Избранное',
-    cabinet: '👤 Мой кабинет',
-    sell: 'Продать',
-    sold: 'Продано',
-    notFound: 'Ничего не найдено',
-    noFavs: 'Избранных нет',
-    filterTitle: '⚙️ Фильтр',
-    priceUpTo: 'Цена до (₸)',
-    allCats: 'Все категории',
-    tech: '🫖 Техника',
-    books: '📚 Учебники',
-    furniture: '🛋️ Мебель',
-    clearFilter: 'Очистить',
-    applyFilter: 'Применить',
-    filterApplied: '✅ Фильтр применён',
-    filterCleared: '🧹 Фильтр сброшен',
-    newListing: '➕ Новое объявление',
-    nameLabel: 'Название',
-    namePlaceholder: 'Название товара',
-    priceLabel: 'Цена (₸)',
-    pricePlaceholder: 'Например: 5000',
-    categoryLabel: 'Категория',
-    descLabel: 'Описание',
-    descPlaceholder: 'Краткое описание...',
-    photoLabel: 'Ссылка на фото (необязательно)',
-    cancel: 'Отмена',
-    publish: 'Опубликовать',
-    fillFields: '⚠️ Заполните название и цену',
-    published: '✅ Опубликовано!',
-    addedFav: '❤️ Добавлено в избранное',
-    removedFav: 'Удалено из избранного',
-    inFav: '❤️ В избранном',
-    toFav: '🤍 В избранное',
-    whatsapp: '💬 Написать в WhatsApp',
-    seller: 'Продавец',
-    pickup: ', самовывоз до 22:00',
-    verified: 'Верифицирован через Stud.ID',
-    menu: 'Меню',
-    language: 'Язык',
-    sellMobile: '➕ Продать вещь',
+    searchPlaceholder: 'Поиск товаров...', filter: '🔔 Фильтр', favorites: 'Избранное',
+    cabinet: '👤 Мой кабинет', sell: 'Продать', sold: 'Продано',
+    notFound: 'Ничего не найдено', noFavs: 'Избранных нет',
+    filterTitle: '⚙️ Фильтр', priceUpTo: 'Цена до (₸)', allCats: 'Все категории',
+    tech: '🫖 Техника', books: '📚 Учебники', furniture: '🛋️ Мебель',
+    clearFilter: 'Очистить', applyFilter: 'Применить',
+    filterApplied: '✅ Фильтр применён', filterCleared: '🧹 Фильтр сброшен',
+    newListing: '➕ Новое объявление', nameLabel: 'Название', namePlaceholder: 'Название товара',
+    priceLabel: 'Цена (₸)', pricePlaceholder: 'Например: 5000', categoryLabel: 'Категория',
+    descLabel: 'Описание', descPlaceholder: 'Краткое описание...',
+    photoLabel: 'Ссылка на фото (необязательно)', cancel: 'Отмена', publish: 'Опубликовать',
+    fillFields: '⚠️ Заполните название и цену', published: '✅ Опубликовано!',
+    addedFav: '❤️ Добавлено в избранное', removedFav: 'Удалено из избранного',
+    inFav: '❤️ В избранном', toFav: '🤍 В избранное',
+    whatsapp: '💬 Написать в WhatsApp', seller: 'Продавец',
+    pickup: ', самовывоз до 22:00', verified: 'Верифицирован через Stud.ID',
+    menu: 'Меню', language: 'Язык', sellMobile: '➕ Продать вещь',
     favModalTitle: '❤️ Избранное',
+    login: 'Войти', register: 'Регистрация',
+    loginTitle: '👋 Вход в аккаунт', registerTitle: '🎓 Создать аккаунт',
+    emailLabel: 'Email', passwordLabel: 'Пароль',
+    regNameLabel: 'Имя', regLocationLabel: 'Университет / Общежитие (необязательно)',
+    regLocationPlaceholder: 'Например: КазНУ, Общежитие №3',
+    loginSubmit: 'Войти', registerSubmit: 'Зарегистрироваться',
+    loginSwitch: 'Нет аккаунта? <a onclick="openRegisterModal()">Зарегистрироваться</a>',
+    registerSwitch: 'Уже есть аккаунт? <a onclick="openLoginModal()">Войти</a>',
+    errRequired: 'Обязательное поле', errInvalidEmail: 'Введите корректный email',
+    errShortPassword: 'Минимум 6 символов', errEmailExists: 'Этот email уже зарегистрирован',
+    errNotFound: 'Пользователь с таким email не найден', errWrongPassword: 'Неверный пароль',
+    loginSuccess: '✅ Добро пожаловать!', registerSuccess: '✅ Аккаунт создан!',
+    mustLogin: '🔒 Войдите, чтобы добавить объявление',
   },
   KZ: {
-    searchPlaceholder: 'Тауарларды іздеу...',
-    filter: '🔔 Сүзгі',
-    favorites: 'Таңдаулылар',
-    cabinet: '👤 Менің кабинетім',
-    sell: 'Сату',
-    sold: 'Сатылды',
-    notFound: 'Ештеңе табылмады',
-    noFavs: 'Таңдаулылар жоқ',
-    filterTitle: '⚙️ Сүзгі',
-    priceUpTo: 'Бағасы дейін (₸)',
-    allCats: 'Барлық санаттар',
-    tech: '🫖 Техника',
-    books: '📚 Оқулықтар',
-    furniture: '🛋️ Жиhаз',
-    clearFilter: 'Тазалау',
-    applyFilter: 'Қолдану',
-    filterApplied: '✅ Сүзгі қолданылды',
-    filterCleared: '🧹 Сүзгі тазаланды',
-    newListing: '➕ Жаңа хабарландыру',
-    nameLabel: 'Атауы',
-    namePlaceholder: 'Тауардың атауы',
-    priceLabel: 'Бағасы (₸)',
-    pricePlaceholder: 'Мысалы: 5000',
-    categoryLabel: 'Санат',
-    descLabel: 'Сипаттама',
-    descPlaceholder: 'Қысқаша сипаттама...',
-    photoLabel: 'Фото сілтемесі (міндетті емес)',
-    cancel: 'Болдырмау',
-    publish: 'Жариялау',
-    fillFields: '⚠️ Атауы мен бағасын толтырыңыз',
-    published: '✅ Жарияланды!',
-    addedFav: '❤️ Таңдаулыларға қосылды',
-    removedFav: 'Таңдаулылардан алынды',
-    inFav: '❤️ Таңдаулыларда',
-    toFav: '🤍 Таңдаулыларға',
-    whatsapp: '💬 WhatsApp-та жазу',
-    seller: 'Сатушы',
-    pickup: ', 22:00-ге дейін алу',
-    verified: 'Stud.ID арқылы расталған',
-    menu: 'Мәзір',
-    language: 'Тіл',
-    sellMobile: '➕ Зат сату',
+    searchPlaceholder: 'Тауарларды іздеу...', filter: '🔔 Сүзгі', favorites: 'Таңдаулылар',
+    cabinet: '👤 Менің кабинетім', sell: 'Сату', sold: 'Сатылды',
+    notFound: 'Ештеңе табылмады', noFavs: 'Таңдаулылар жоқ',
+    filterTitle: '⚙️ Сүзгі', priceUpTo: 'Бағасы дейін (₸)', allCats: 'Барлық санаттар',
+    tech: '🫖 Техника', books: '📚 Оқулықтар', furniture: '🛋️ Жиhаз',
+    clearFilter: 'Тазалау', applyFilter: 'Қолдану',
+    filterApplied: '✅ Сүзгі қолданылды', filterCleared: '🧹 Сүзгі тазаланды',
+    newListing: '➕ Жаңа хабарландыру', nameLabel: 'Атауы', namePlaceholder: 'Тауардың атауы',
+    priceLabel: 'Бағасы (₸)', pricePlaceholder: 'Мысалы: 5000', categoryLabel: 'Санат',
+    descLabel: 'Сипаттама', descPlaceholder: 'Қысқаша сипаттама...',
+    photoLabel: 'Фото сілтемесі (міндетті емес)', cancel: 'Болдырмау', publish: 'Жариялау',
+    fillFields: '⚠️ Атауы мен бағасын толтырыңыз', published: '✅ Жарияланды!',
+    addedFav: '❤️ Таңдаулыларға қосылды', removedFav: 'Таңдаулылардан алынды',
+    inFav: '❤️ Таңдаулыларда', toFav: '🤍 Таңдаулыларға',
+    whatsapp: '💬 WhatsApp-та жазу', seller: 'Сатушы',
+    pickup: ', 22:00-ге дейін алу', verified: 'Stud.ID арқылы расталған',
+    menu: 'Мәзір', language: 'Тіл', sellMobile: '➕ Зат сату',
     favModalTitle: '❤️ Таңдаулылар',
+    login: 'Кіру', register: 'Тіркелу',
+    loginTitle: '👋 Аккаунтқа кіру', registerTitle: '🎓 Аккаунт жасау',
+    emailLabel: 'Email', passwordLabel: 'Құпия сөз',
+    regNameLabel: 'Аты', regLocationLabel: 'Университет / Жатақхана (міндетті емес)',
+    regLocationPlaceholder: 'Мысалы: ҚазҰУ, Жатақхана №3',
+    loginSubmit: 'Кіру', registerSubmit: 'Тіркелу',
+    loginSwitch: 'Аккаунт жоқ па? <a onclick="openRegisterModal()">Тіркелу</a>',
+    registerSwitch: 'Аккаунт бар ма? <a onclick="openLoginModal()">Кіру</a>',
+    errRequired: 'Міндетті өріс', errInvalidEmail: 'Дұрыс email енгізіңіз',
+    errShortPassword: 'Кемінде 6 таңба', errEmailExists: 'Бұл email тіркелген',
+    errNotFound: 'Мұндай email табылмады', errWrongPassword: 'Қате құпия сөз',
+    loginSuccess: '✅ Қош келдіңіз!', registerSuccess: '✅ Аккаунт жасалды!',
+    mustLogin: '🔒 Хабарландыру қосу үшін кіріңіз',
   },
   EN: {
-    searchPlaceholder: 'Search items...',
-    filter: '🔔 Filter',
-    favorites: 'Favorites',
-    cabinet: '👤 My Account',
-    sell: 'Sell',
-    sold: 'Sold',
-    notFound: 'Nothing found',
-    noFavs: 'No favorites yet',
-    filterTitle: '⚙️ Filter',
-    priceUpTo: 'Max price (₸)',
-    allCats: 'All categories',
-    tech: '🫖 Electronics',
-    books: '📚 Textbooks',
-    furniture: '🛋️ Furniture',
-    clearFilter: 'Clear',
-    applyFilter: 'Apply',
-    filterApplied: '✅ Filter applied',
-    filterCleared: '🧹 Filter cleared',
-    newListing: '➕ New listing',
-    nameLabel: 'Title',
-    namePlaceholder: 'Item name',
-    priceLabel: 'Price (₸)',
-    pricePlaceholder: 'E.g. 5000',
-    categoryLabel: 'Category',
-    descLabel: 'Description',
-    descPlaceholder: 'Short description...',
-    photoLabel: 'Photo URL (optional)',
-    cancel: 'Cancel',
-    publish: 'Publish',
-    fillFields: '⚠️ Fill in title and price',
-    published: '✅ Published!',
-    addedFav: '❤️ Added to favorites',
-    removedFav: 'Removed from favorites',
-    inFav: '❤️ In favorites',
-    toFav: '🤍 Add to favorites',
-    whatsapp: '💬 Message on WhatsApp',
-    seller: 'Seller',
-    pickup: ', pickup until 10 PM',
-    verified: 'Verified via Stud.ID',
-    menu: 'Menu',
-    language: 'Language',
-    sellMobile: '➕ Sell an item',
+    searchPlaceholder: 'Search items...', filter: '🔔 Filter', favorites: 'Favorites',
+    cabinet: '👤 My Account', sell: 'Sell', sold: 'Sold',
+    notFound: 'Nothing found', noFavs: 'No favorites yet',
+    filterTitle: '⚙️ Filter', priceUpTo: 'Max price (₸)', allCats: 'All categories',
+    tech: '🫖 Electronics', books: '📚 Textbooks', furniture: '🛋️ Furniture',
+    clearFilter: 'Clear', applyFilter: 'Apply',
+    filterApplied: '✅ Filter applied', filterCleared: '🧹 Filter cleared',
+    newListing: '➕ New listing', nameLabel: 'Title', namePlaceholder: 'Item name',
+    priceLabel: 'Price (₸)', pricePlaceholder: 'E.g. 5000', categoryLabel: 'Category',
+    descLabel: 'Description', descPlaceholder: 'Short description...',
+    photoLabel: 'Photo URL (optional)', cancel: 'Cancel', publish: 'Publish',
+    fillFields: '⚠️ Fill in title and price', published: '✅ Published!',
+    addedFav: '❤️ Added to favorites', removedFav: 'Removed from favorites',
+    inFav: '❤️ In favorites', toFav: '🤍 Add to favorites',
+    whatsapp: '💬 Message on WhatsApp', seller: 'Seller',
+    pickup: ', pickup until 10 PM', verified: 'Verified via Stud.ID',
+    menu: 'Menu', language: 'Language', sellMobile: '➕ Sell an item',
     favModalTitle: '❤️ Favorites',
+    login: 'Log in', register: 'Sign up',
+    loginTitle: '👋 Log in', registerTitle: '🎓 Create account',
+    emailLabel: 'Email', passwordLabel: 'Password',
+    regNameLabel: 'Name', regLocationLabel: 'University / Dorm (optional)',
+    regLocationPlaceholder: 'E.g. KazNU, Dorm #3',
+    loginSubmit: 'Log in', registerSubmit: 'Create account',
+    loginSwitch: 'No account? <a onclick="openRegisterModal()">Sign up</a>',
+    registerSwitch: 'Already have an account? <a onclick="openLoginModal()">Log in</a>',
+    errRequired: 'Required field', errInvalidEmail: 'Enter a valid email',
+    errShortPassword: 'At least 6 characters', errEmailExists: 'This email is already registered',
+    errNotFound: 'No user found with this email', errWrongPassword: 'Wrong password',
+    loginSuccess: '✅ Welcome back!', registerSuccess: '✅ Account created!',
+    mustLogin: '🔒 Log in to add a listing',
   }
 };
 
 let currentLang = localStorage.getItem('lang') || 'RU';
+function t(key) { return (LANG[currentLang] || LANG.RU)[key] || key; }
 
-function t(key) {
-  return (LANG[currentLang] || LANG.RU)[key] || key;
+/* ── AUTH ─────────────────────────────────────── */
+const Auth = {
+  _get(k) { try { return JSON.parse(localStorage.getItem(k)) ?? null; } catch { return null; } },
+  _set(k,v) { localStorage.setItem(k, JSON.stringify(v)); },
+  isLoggedIn() { return !!this._get('session_user'); },
+  currentUser() { return this._get('session_user'); },
+  getUsers() { return this._get('users') ?? []; },
+  register(name, email, password, location) {
+    const users = this.getUsers();
+    if (users.find(u => u.email.toLowerCase() === email.toLowerCase())) return { err: 'emailExists' };
+    const id = Date.now() + Math.floor(Math.random() * 1000);
+    const user = { id, name, email, password, location, avatar: null, rating: 5.0, reviews: 0, verified: false };
+    users.push(user);
+    this._set('users', users);
+    const session = { id, name, email, location, avatar: null, rating: 5.0, reviews: 0, verified: false };
+    this._set('session_user', session);
+    localStorage.setItem('current_user', JSON.stringify(session));
+    return { ok: true };
+  },
+  login(email, password) {
+    const users = this.getUsers();
+    const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+    if (!user) return { err: 'notFound' };
+    if (user.password !== password) return { err: 'wrongPassword' };
+    const session = { id: user.id, name: user.name, email: user.email, location: user.location||'', avatar: user.avatar, rating: user.rating, reviews: user.reviews, verified: user.verified };
+    this._set('session_user', session);
+    localStorage.setItem('current_user', JSON.stringify(session));
+    return { ok: true };
+  },
+};
+
+function updateHeaderAuth() {
+  const loggedIn = Auth.isLoggedIn();
+  const user = Auth.currentUser();
+  const guestBtns = document.getElementById('guestButtons');
+  const cabinetBtn = document.getElementById('btnCabinet');
+  const mnAuth = document.getElementById('mnAuthSection');
+  const mnCabinet = document.getElementById('mnCabinet');
+  if (loggedIn) {
+    guestBtns.style.display = 'none';
+    cabinetBtn.style.display = '';
+    cabinetBtn.textContent = `👤 ${user.name.split(' ')[0]}`;
+    mnAuth.style.display = 'none';
+    mnCabinet.style.display = '';
+    mnCabinet.textContent = t('cabinet');
+  } else {
+    guestBtns.style.display = 'flex';
+    cabinetBtn.style.display = 'none';
+    mnAuth.style.display = 'block';
+    mnCabinet.style.display = 'none';
+    document.getElementById('btnLogin').textContent = t('login');
+    document.getElementById('btnRegister').textContent = t('register');
+    document.getElementById('mnLogin').textContent = t('login');
+    document.getElementById('mnRegister').textContent = t('register');
+  }
 }
 
 function applyLang() {
   document.getElementById('searchInput').placeholder = t('searchPlaceholder');
-  const mobileSearch = document.getElementById('mobileSearchInput');
-  if (mobileSearch) mobileSearch.placeholder = t('searchPlaceholder');
-
+  const ms = document.getElementById('mobileSearchInput');
+  if (ms) ms.placeholder = t('searchPlaceholder');
   document.getElementById('btnFilter').textContent = t('filter');
   document.getElementById('btnFavNav').innerHTML = `❤️ ${t('favorites')} <span class="fav-badge" id="favCount">${DB.getFavorites().length}</span>`;
-  document.getElementById('btnCabinet').textContent = t('cabinet');
   document.getElementById('fabText').textContent = t('sell');
-
   document.getElementById('mnMenuLabel').textContent = t('menu');
-  document.getElementById('mnCabinet').textContent = t('cabinet');
   document.getElementById('mnFavLabel').textContent = t('favorites');
   document.getElementById('mnFilter').textContent = t('filter');
   document.getElementById('mnSell').textContent = t('sellMobile');
   document.getElementById('mnLangLabel').textContent = t('language');
-
   document.getElementById('createModalTitle').textContent = t('newListing');
   document.getElementById('lblCreateName').textContent = t('nameLabel');
   document.getElementById('createTitle').placeholder = t('namePlaceholder');
@@ -307,7 +383,6 @@ function applyLang() {
   document.getElementById('lblCreatePhoto').textContent = t('photoLabel');
   document.getElementById('btnCreateCancel').textContent = t('cancel');
   document.getElementById('btnPublish').textContent = t('publish');
-
   document.getElementById('filterModalTitle').textContent = t('filterTitle');
   document.getElementById('lblFilterPrice').textContent = t('priceUpTo');
   document.getElementById('optFilterAll').textContent = t('allCats');
@@ -317,29 +392,87 @@ function applyLang() {
   document.getElementById('lblFilterCat').textContent = t('categoryLabel');
   document.getElementById('btnClearFilter').textContent = t('clearFilter');
   document.getElementById('btnApplyFilter').textContent = t('applyFilter');
-
   document.getElementById('favModalTitle').textContent = t('favModalTitle');
-
+  document.getElementById('loginTitle').textContent = t('loginTitle');
+  document.getElementById('lblLoginEmail').textContent = t('emailLabel');
+  document.getElementById('lblLoginPassword').textContent = t('passwordLabel');
+  document.getElementById('btnLoginCancel').textContent = t('cancel');
+  document.getElementById('btnLoginSubmit').textContent = t('loginSubmit');
+  document.getElementById('loginSwitch').innerHTML = t('loginSwitch');
+  document.getElementById('registerTitle').textContent = t('registerTitle');
+  document.getElementById('lblRegName').textContent = t('regNameLabel');
+  document.getElementById('lblRegEmail').textContent = t('emailLabel');
+  document.getElementById('lblRegPassword').textContent = t('passwordLabel');
+  document.getElementById('lblRegLocation').textContent = t('regLocationLabel');
+  document.getElementById('regLocation').placeholder = t('regLocationPlaceholder');
+  document.getElementById('btnRegCancel').textContent = t('cancel');
+  document.getElementById('btnRegSubmit').textContent = t('registerSubmit');
+  document.getElementById('registerSwitch').innerHTML = t('registerSwitch');
   document.getElementById('langSelDesktop').value = currentLang;
   document.getElementById('langSelMobile').value = currentLang;
-
+  updateHeaderAuth();
   render();
 }
 
-function switchLang(val) {
-  currentLang = val;
-  localStorage.setItem('lang', val);
-  applyLang();
+function switchLang(val) { currentLang = val; localStorage.setItem('lang', val); applyLang(); }
+
+/* ── AUTH MODALS ──────────────────────────────── */
+function openLoginModal() {
+  closeModals();
+  document.querySelectorAll('.field-error').forEach(el => el.classList.remove('show'));
+  document.getElementById('loginEmail').value = '';
+  document.getElementById('loginPassword').value = '';
+  document.getElementById('loginModal').classList.add('open');
+}
+function openRegisterModal() {
+  closeModals();
+  document.querySelectorAll('.field-error').forEach(el => el.classList.remove('show'));
+  ['regName','regEmail','regPassword','regLocation'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('registerModal').classList.add('open');
+}
+function showErr(id, msg) { const el=document.getElementById(id); el.textContent=msg; el.classList.add('show'); }
+
+function doLogin() {
+  document.querySelectorAll('.field-error').forEach(el => el.classList.remove('show'));
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  let ok = true;
+  if (!email) { showErr('loginEmailErr', t('errRequired')); ok=false; }
+  else if (!/\S+@\S+\.\S+/.test(email)) { showErr('loginEmailErr', t('errInvalidEmail')); ok=false; }
+  if (!password) { showErr('loginPasswordErr', t('errRequired')); ok=false; }
+  if (!ok) return;
+  const res = Auth.login(email, password);
+  if (res.err === 'notFound') { showErr('loginGeneralErr', t('errNotFound')); return; }
+  if (res.err === 'wrongPassword') { showErr('loginGeneralErr', t('errWrongPassword')); return; }
+  closeModals(); showToast(t('loginSuccess')); updateHeaderAuth(); render();
 }
 
+function doRegister() {
+  document.querySelectorAll('.field-error').forEach(el => el.classList.remove('show'));
+  const name = document.getElementById('regName').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
+  const password = document.getElementById('regPassword').value;
+  const location = document.getElementById('regLocation').value.trim();
+  let ok = true;
+  if (!name) { showErr('regNameErr', t('errRequired')); ok=false; }
+  if (!email) { showErr('regEmailErr', t('errRequired')); ok=false; }
+  else if (!/\S+@\S+\.\S+/.test(email)) { showErr('regEmailErr', t('errInvalidEmail')); ok=false; }
+  if (!password) { showErr('regPasswordErr', t('errRequired')); ok=false; }
+  else if (password.length < 6) { showErr('regPasswordErr', t('errShortPassword')); ok=false; }
+  if (!ok) return;
+  const res = Auth.register(name, email, password, location);
+  if (res.err === 'emailExists') { showErr('regEmailErr', t('errEmailExists')); return; }
+  closeModals(); showToast(t('registerSuccess')); updateHeaderAuth(); render();
+}
+
+/* ── DB ───────────────────────────────────────── */
 const DB = {
   _get(k) { try { return JSON.parse(localStorage.getItem(k)) ?? null; } catch { return null; } },
   _set(k,v) { localStorage.setItem(k, JSON.stringify(v)); },
   _id() { return Date.now() + Math.floor(Math.random() * 1000); },
   init() {
     if (this._get('db_v2')) return;
-    const userId = this._id();
-    const now = Date.now();
+    const userId = this._id(); const now = Date.now();
     this._set('current_user', { id: userId, name: 'Ержан С.', email: 'erzhan@test.kz', location: 'КазНУ, Общежитие №17', avatar: null, rating: 5.0, reviews: 12, verified: true });
     this._set('listings', [
       { id: this._id(), userId, title: 'Микроволновка Samsung', price: 8500, category: 'tech', description: 'В отличном состоянии, использовалась 1 год', image: 'https://images.unsplash.com/photo-1584568694244-14fbdf83bd30?w=400&h=300&fit=crop', status: 'active', views: 204, createdAt: now - 86400000*5 },
@@ -349,12 +482,9 @@ const DB = {
       { id: this._id(), userId, title: 'Учебник по матанализу', price: 1200, category: 'books', description: '2-е издание, без пометок', image: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&h=300&fit=crop', status: 'active', views: 77, createdAt: now - 86400000 },
       { id: this._id(), userId, title: 'Электрочайник Bosch', price: 5500, category: 'tech', description: '1.7 л, быстрый нагрев', image: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=300&fit=crop', status: 'active', views: 120, createdAt: now },
     ]);
-    this._set('favorites', []);
-    this._set('messages', []);
-    this._set('db_v2', true);
+    this._set('favorites', []); this._set('messages', []); this._set('db_v2', true);
   },
-  getUser() { return this._get('current_user'); },
-  saveUser(d) { const u = {...this.getUser(),...d}; this._set('current_user',u); return u; },
+  getUser() { return Auth.currentUser() || this._get('current_user'); },
   getListings({category,maxPrice,search,status}={}) {
     let l = this._get('listings') ?? [];
     if (status && status!=='all') l = l.filter(x=>x.status===status);
@@ -365,18 +495,13 @@ const DB = {
   },
   getListing(id) { return (this._get('listings')??[]).find(l=>l.id===id)??null; },
   addListing(d) { const l=this._get('listings')??[]; const item={id:this._id(),userId:this.getUser()?.id,views:0,status:'active',createdAt:Date.now(),...d}; l.unshift(item); this._set('listings',l); return item; },
-  updateListing(id,d) { const l=this._get('listings')??[]; const i=l.findIndex(x=>x.id===id); if(i===-1)return null; l[i]={...l[i],...d}; this._set('listings',l); return l[i]; },
   deleteListing(id) { this._set('listings',(this._get('listings')??[]).filter(l=>l.id!==id)); this._set('favorites',(this._get('favorites')??[]).filter(f=>f!==id)); },
-  incrementViews(id) { const l=this.getListing(id); if(l)this.updateListing(id,{views:(l.views||0)+1}); },
+  incrementViews(id) { const l=this.getListing(id); if(l){ const all=this._get('listings')??[]; const i=all.findIndex(x=>x.id===id); if(i>-1){all[i].views=(all[i].views||0)+1; this._set('listings',all);} } },
   getFavorites() { return this._get('favorites')??[]; },
   isFavorite(id) { return this.getFavorites().includes(id); },
   toggleFavorite(id) { const f=this.getFavorites(); const n=f.includes(id)?f.filter(x=>x!==id):[...f,id]; this._set('favorites',n); return n.includes(id); },
   getFavoriteListings() { const f=this.getFavorites(); return (this._get('listings')??[]).filter(l=>f.includes(l.id)); },
-  getMessages() { return this._get('messages')??[]; },
-  getCategoryName(id) {
-    const map = { tech: 'tech', books: 'books', furniture: 'furniture' };
-    return t(map[id]) || id;
-  },
+  getCategoryName(id) { return t({tech:'tech',books:'books',furniture:'furniture'}[id])||id; },
 };
 
 DB.init();
@@ -410,10 +535,8 @@ function render() {
     ? data.map(cardHTML).join('')
     : `<div class="empty-state"><span class="empty-icon">🔍</span>${t('notFound')}</div>`;
   const n = DB.getFavorites().length;
-  const fc = document.getElementById('favCount');
-  const fcm = document.getElementById('favCountMobile');
-  if (fc) fc.textContent = n;
-  if (fcm) fcm.textContent = n;
+  const fc = document.getElementById('favCount'); if(fc) fc.textContent = n;
+  const fcm = document.getElementById('favCountMobile'); if(fcm) fcm.textContent = n;
 }
 
 function handleSearch() { activeFilter.search = document.getElementById('searchInput').value; render(); }
@@ -421,8 +544,7 @@ function handleSearchMobile(v) { activeFilter.search = v; render(); }
 
 function openFilterModal() { document.getElementById('filterModal').classList.add('open'); }
 function applyFilter() {
-  const max = document.getElementById('filterMax').value;
-  activeFilter.maxPrice = max ? parseInt(max) : null;
+  activeFilter.maxPrice = document.getElementById('filterMax').value ? parseInt(document.getElementById('filterMax').value) : null;
   activeFilter.cat = document.getElementById('filterCatSel').value;
   closeModals(); render(); showToast(t('filterApplied'));
 }
@@ -436,41 +558,29 @@ function clearFilters() {
 
 function toggleFav(e, id) {
   e.stopPropagation();
-  const added = DB.toggleFavorite(id);
-  showToast(added ? t('addedFav') : t('removedFav'));
-  render();
-  if (currentProductId===id) updateFavBtn(id);
+  showToast(DB.toggleFavorite(id) ? t('addedFav') : t('removedFav'));
+  render(); if(currentProductId===id) updateFavBtn(id);
 }
 function toggleFavFromModal() {
-  if (!currentProductId) return;
-  const added = DB.toggleFavorite(currentProductId);
-  showToast(added ? t('addedFav') : t('removedFav'));
+  if(!currentProductId) return;
+  showToast(DB.toggleFavorite(currentProductId) ? t('addedFav') : t('removedFav'));
   updateFavBtn(currentProductId); render();
 }
-function updateFavBtn(id) {
-  const btn = document.getElementById('pmFavBtn');
-  if (btn) btn.textContent = DB.isFavorite(id) ? t('inFav') : t('toFav');
-}
+function updateFavBtn(id) { const btn=document.getElementById('pmFavBtn'); if(btn) btn.textContent=DB.isFavorite(id)?t('inFav'):t('toFav'); }
 
 function openFavoritesModal() {
   const items = DB.getFavoriteListings();
   document.getElementById('favGrid').innerHTML = items.length
     ? items.map(i=>`<div class="listing-card" onclick="openProduct(${i.id});closeModals();">
-        <div class="card-img-wrap">
-          <img src="${i.image||'https://via.placeholder.com/400x200'}" class="card-img" alt="">
-          ${i.status==='sold'?`<div class="card-badge sold">${t('sold')}</div>`:''}
-        </div>
-        <div class="card-body">
-          <div class="card-price">${i.price.toLocaleString('ru')} ₸</div>
-          <div class="card-title">${i.title}</div>
-        </div>
+        <div class="card-img-wrap"><img src="${i.image}" class="card-img" alt="">${i.status==='sold'?`<div class="card-badge sold">${t('sold')}</div>`:''}</div>
+        <div class="card-body"><div class="card-price">${i.price.toLocaleString('ru')} ₸</div><div class="card-title">${i.title}</div></div>
       </div>`).join('')
     : `<div class="empty-state"><span class="empty-icon">🤍</span>${t('noFavs')}</div>`;
   document.getElementById('favModal').classList.add('open');
 }
 
 function openProduct(id) {
-  const item = DB.getListing(id); if (!item) return;
+  const item = DB.getListing(id); if(!item) return;
   DB.incrementViews(id); currentProductId = id;
   const user = DB.getUser();
   document.getElementById('pmImage').src = item.image||'https://via.placeholder.com/520x240?text=No+photo';
@@ -488,7 +598,10 @@ function openProduct(id) {
   render();
 }
 
-function openCreateModal() { document.getElementById('createModal').classList.add('open'); }
+function openCreateModal() {
+  if (!Auth.isLoggedIn()) { showToast(t('mustLogin')); openLoginModal(); return; }
+  document.getElementById('createModal').classList.add('open');
+}
 function createListing() {
   const title = document.getElementById('createTitle').value.trim();
   const price = parseInt(document.getElementById('createPrice').value);
@@ -503,7 +616,7 @@ document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModals();});
 function openMobileNav() { document.getElementById('mobileNav').classList.add('open'); }
 function closeMobileNav() { document.getElementById('mobileNav').classList.remove('open'); }
-function showToast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2400); }
+function showToast(msg) { const el=document.getElementById('toast'); el.textContent=msg; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),2400); }
 
 applyLang();
 </script>
