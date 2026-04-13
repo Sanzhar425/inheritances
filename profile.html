@@ -367,6 +367,13 @@ const LANG = {
 let currentLang = localStorage.getItem('lang') || 'RU';
 function t(key) { return (LANG[currentLang] || LANG.RU)[key] || key; }
 
+/* ── AUTH helpers ─────────────────────────── */
+const Auth = {
+  isLoggedIn() { try { return !!JSON.parse(localStorage.getItem('session_user')); } catch { return false; } },
+  currentUser() { try { return JSON.parse(localStorage.getItem('session_user')); } catch { return null; } },
+  logout() { localStorage.removeItem('session_user'); },
+};
+
 function applyLang() {
   document.getElementById('profileSearch').placeholder = t('search');
   document.getElementById('btnMessages').textContent = t('messages');
@@ -645,11 +652,7 @@ function updateMsgBadge() {
 
 function openLogoutModal() { document.getElementById('logoutModal').classList.add('open'); }
 function confirmLogout() {
-  localStorage.removeItem('db_v2');
-  localStorage.removeItem('current_user');
-  localStorage.removeItem('listings');
-  localStorage.removeItem('favorites');
-  localStorage.removeItem('messages');
+  Auth.logout();
   closeModals();
   showToast(t('logoutDone'));
   setTimeout(() => { window.location.href = 'index.html'; }, 1200);
@@ -662,7 +665,11 @@ function openMN() { document.getElementById('mobileNav').classList.add('open'); 
 function closeMN() { document.getElementById('mobileNav').classList.remove('open'); }
 function showToast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2400); }
 
-applyLang();
+if (!Auth.isLoggedIn()) {
+  window.location.href = 'index.html';
+} else {
+  applyLang();
+}
 </script>
 </body>
 </html>
