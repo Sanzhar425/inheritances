@@ -1,6 +1,6 @@
 /* ============================================================
    style.css — Наследство
-   Общие стили для index.html и profile.html
+   Общие стили для index.html, profile.html и login.html
    ============================================================ */
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -61,6 +61,50 @@ body {
 
 .burger { display: none; background: none; border: none; cursor: pointer; font-size: 22px; padding: 4px 8px; border-radius: 8px; transition: background 0.15s; }
 .burger:hover { background: #f3f4f6; }
+
+/* ══════════════════════════════════════════
+   AUTH BUTTONS (index.html header)
+══════════════════════════════════════════ */
+.auth-btns { display: flex; gap: 8px; align-items: center; }
+
+.btn-login {
+  background: white;
+  color: var(--green);
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1.5px solid var(--green);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: var(--font);
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+.btn-login:hover { background: var(--green-light); }
+
+.btn-register {
+  background: var(--green);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1.5px solid var(--green);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: var(--font);
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+.btn-register:hover { background: var(--green-dark); }
+
+.modal input { margin-bottom: 4px; }
+
+.field-error { font-size: 11px; color: var(--red); margin-bottom: 8px; display: none; }
+.field-error.show { display: block; }
+
+.auth-switch { text-align: center; font-size: 13px; color: #666; margin-top: 16px; }
+.auth-switch a { color: var(--green); font-weight: 600; cursor: pointer; text-decoration: none; }
+.auth-switch a:hover { text-decoration: underline; }
 
 /* ══════════════════════════════════════════
    MOBILE DRAWER
@@ -214,7 +258,6 @@ body {
 
 .profile-card { background: white; border-radius: var(--radius-lg); padding: 24px; text-align: center; box-shadow: var(--shadow-sm); }
 .profile-avatar { width: 90px; height: 90px; border-radius: 50%; background: #e0e0e0; margin: 0 auto 12px; object-fit: cover; display: block; }
-.profile-info {}
 .profile-name { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
 .profile-loc { font-size: 12px; color: #666; margin-bottom: 6px; }
 .profile-rating { font-size: 13px; color: var(--amber); margin-bottom: 14px; }
@@ -240,7 +283,6 @@ body {
 
 .listing-item { background: white; border-radius: 0; padding: 14px; margin-bottom: 0; display: flex; gap: 14px; box-shadow: none; border-bottom: 1px solid #f3f4f6; }
 .listing-item:last-child { border-bottom: none; border-radius: 0 0 var(--radius) var(--radius); }
-#tab-listings > .listing-item:first-child { border-radius: 0; }
 
 .listing-img-wrap { position: relative; flex-shrink: 0; }
 .listing-img { width: 90px; height: 90px; border-radius: 8px; object-fit: cover; display: block; }
@@ -256,6 +298,224 @@ body {
 .delete-btn { background: var(--red);   color: white; }
 
 .tab-empty { background: white; padding: 50px 20px; text-align: center; border-radius: 0 0 var(--radius) var(--radius); color: #aaa; font-size: 14px; line-height: 1.8; box-shadow: var(--shadow-sm); }
+
+/* ══════════════════════════════════════════
+   LOGIN PAGE
+══════════════════════════════════════════ */
+body.login-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+}
+
+.logo-link {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--green);
+  text-decoration: none;
+  margin-bottom: 24px;
+  display: block;
+  text-align: center;
+}
+
+.login-card {
+  background: white;
+  border-radius: 16px;
+  padding: 36px 32px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.12);
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 7px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font);
+  background: transparent;
+  color: #6b7280;
+  transition: all 0.2s;
+}
+.tab-btn.active {
+  background: white;
+  color: #1f2937;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+
+.tabs-login {
+  display: flex;
+  background: #f3f4f6;
+  border-radius: 10px;
+  padding: 4px;
+  margin-bottom: 28px;
+  gap: 4px;
+}
+
+.form-group { margin-bottom: 16px; }
+
+.login-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.login-input {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 9px;
+  font-size: 15px;
+  font-family: var(--font);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  color: #1f2937;
+}
+.login-input:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(45,126,50,0.1); }
+.login-input.error { border-color: var(--red); }
+
+.login-field-error {
+  font-size: 12px;
+  color: var(--red);
+  margin-top: 4px;
+  display: none;
+}
+.login-field-error.show { display: block; }
+
+.submit-btn {
+  width: 100%;
+  padding: 13px;
+  background: var(--green);
+  color: white;
+  border: none;
+  border-radius: 9px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: var(--font);
+  margin-top: 6px;
+  transition: background 0.2s, transform 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.submit-btn:hover { background: var(--green-dark); }
+.submit-btn:active { transform: scale(0.98); }
+.submit-btn:disabled { background: #9ca3af; cursor: not-allowed; transform: none; }
+
+.alert {
+  padding: 12px 14px;
+  border-radius: 9px;
+  font-size: 13px;
+  margin-bottom: 18px;
+  display: none;
+  line-height: 1.5;
+}
+.alert.show { display: block; }
+.alert-error { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+.alert-success { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+
+.login-hint {
+  font-size: 12px;
+  color: #9ca3af;
+  text-align: center;
+  margin-top: 18px;
+  line-height: 1.6;
+}
+.login-hint a { color: var(--green); text-decoration: none; font-weight: 500; }
+
+.spinner {
+  width: 18px; height: 18px;
+  border: 2px solid rgba(255,255,255,0.4);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: none;
+}
+.submit-btn.loading .spinner { display: block; }
+.submit-btn.loading .btn-text { display: none; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.lang-row {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.lang-pill {
+  padding: 5px 14px;
+  border-radius: 99px;
+  border: 1.5px solid #e5e7eb;
+  background: white;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font);
+  color: #6b7280;
+  transition: all 0.15s;
+}
+.lang-pill.active { border-color: var(--green); color: var(--green); background: var(--green-light); }
+
+.setup-info {
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 20px;
+  font-size: 13px;
+  color: #92400e;
+  line-height: 1.6;
+}
+.setup-info strong { display: block; margin-bottom: 4px; font-size: 14px; }
+.setup-info code {
+  background: #fef3c7;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 12px;
+}
+
+/* ══════════════════════════════════════════
+   FAB — плавающая кнопка "Продать"
+══════════════════════════════════════════ */
+.fab-sell {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  z-index: 400;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #ff8c00;
+  color: white;
+  border: none;
+  border-radius: 999px;
+  padding: 14px 22px;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: var(--font);
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(255, 140, 0, 0.45);
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+}
+.fab-sell:hover {
+  background: #e67e00;
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 6px 28px rgba(255, 140, 0, 0.55);
+}
+.fab-sell:active { transform: scale(0.97); }
+.fab-icon { font-size: 20px; line-height: 1; font-weight: 400; }
+.fab-text { font-size: 15px; font-weight: 700; letter-spacing: 0.01em; }
 
 /* ══════════════════════════════════════════
    RESPONSIVE
@@ -307,6 +567,7 @@ body {
   .listing-actions button { padding: 6px 10px; font-size: 11px; }
   .content-title { font-size: 20px; }
   .tab { padding: 11px 14px; font-size: 13px; }
+  .login-card { padding: 28px 20px; }
 }
 
 @media (max-width: 480px) {
@@ -321,61 +582,11 @@ body {
   .categories-card { padding: 10px 12px; gap: 6px; margin-bottom: 16px; }
   .cat-btn { padding: 8px 10px; min-width: 56px; font-size: 10px; }
   .cat-btn .icon { font-size: 18px; }
+  .fab-sell { bottom: 20px; right: 20px; padding: 13px 18px; font-size: 14px; }
 }
 
 @media (max-width: 400px) {
   .listing-item { gap: 10px; }
   .listing-img { width: 60px; height: 60px; }
   .listing-actions { gap: 6px; }
-}
-
-/* ══════════════════════════════════════════
-   FAB — плавающая кнопка "Продать"
-══════════════════════════════════════════ */
-.fab-sell {
-  position: fixed;
-  bottom: 32px;
-  right: 32px;
-  z-index: 400;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: #ff8c00;
-  color: white;
-  border: none;
-  border-radius: 999px;
-  padding: 14px 22px;
-  font-size: 15px;
-  font-weight: 700;
-  font-family: var(--font);
-  cursor: pointer;
-  box-shadow: 0 4px 20px rgba(255, 140, 0, 0.45);
-  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
-}
-.fab-sell:hover {
-  background: #e67e00;
-  transform: translateY(-2px) scale(1.03);
-  box-shadow: 0 6px 28px rgba(255, 140, 0, 0.55);
-}
-.fab-sell:active {
-  transform: scale(0.97);
-}
-.fab-icon {
-  font-size: 20px;
-  line-height: 1;
-  font-weight: 400;
-}
-.fab-text {
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: 0.01em;
-}
-
-@media (max-width: 480px) {
-  .fab-sell {
-    bottom: 20px;
-    right: 20px;
-    padding: 13px 18px;
-    font-size: 14px;
-  }
 }
