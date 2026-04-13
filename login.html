@@ -5,207 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Наследство — Вход</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --green: #2d7e32;
-      --green-light: #e8f5e9;
-      --green-dark: #1b5e20;
-      --red: #f43f5e;
-      --radius: 12px;
-      --font: 'Inter', sans-serif;
-    }
-    body {
-      font-family: var(--font);
-      min-height: 100vh;
-      background: linear-gradient(135deg, #c2e9fb, #a1c4fd);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 24px 16px;
-    }
-    .logo-link {
-      font-size: 26px;
-      font-weight: 700;
-      color: var(--green);
-      text-decoration: none;
-      margin-bottom: 24px;
-      display: block;
-      text-align: center;
-    }
-    .card {
-      background: white;
-      border-radius: 16px;
-      padding: 36px 32px;
-      width: 100%;
-      max-width: 420px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.12);
-    }
-    .tabs {
-      display: flex;
-      background: #f3f4f6;
-      border-radius: 10px;
-      padding: 4px;
-      margin-bottom: 28px;
-      gap: 4px;
-    }
-    .tab-btn {
-      flex: 1;
-      padding: 10px;
-      border: none;
-      border-radius: 7px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      font-family: var(--font);
-      background: transparent;
-      color: #6b7280;
-      transition: all 0.2s;
-    }
-    .tab-btn.active {
-      background: white;
-      color: #1f2937;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-    }
-    .form-group { margin-bottom: 16px; }
-    label {
-      display: block;
-      font-size: 12px;
-      font-weight: 600;
-      color: #6b7280;
-      margin-bottom: 6px;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-    input {
-      width: 100%;
-      padding: 11px 14px;
-      border: 1.5px solid #e5e7eb;
-      border-radius: 9px;
-      font-size: 15px;
-      font-family: var(--font);
-      outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s;
-      color: #1f2937;
-    }
-    input:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(45,126,50,0.1); }
-    input.error { border-color: var(--red); }
-    .field-error {
-      font-size: 12px;
-      color: var(--red);
-      margin-top: 4px;
-      display: none;
-    }
-    .field-error.show { display: block; }
-    .submit-btn {
-      width: 100%;
-      padding: 13px;
-      background: var(--green);
-      color: white;
-      border: none;
-      border-radius: 9px;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      font-family: var(--font);
-      margin-top: 6px;
-      transition: background 0.2s, transform 0.15s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-    .submit-btn:hover { background: var(--green-dark); }
-    .submit-btn:active { transform: scale(0.98); }
-    .submit-btn:disabled { background: #9ca3af; cursor: not-allowed; transform: none; }
-    .divider {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin: 20px 0;
-      color: #d1d5db;
-      font-size: 13px;
-    }
-    .divider::before, .divider::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: #e5e7eb;
-    }
-    .alert {
-      padding: 12px 14px;
-      border-radius: 9px;
-      font-size: 13px;
-      margin-bottom: 18px;
-      display: none;
-      line-height: 1.5;
-    }
-    .alert.show { display: block; }
-    .alert-error { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
-    .alert-success { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
-    .hint {
-      font-size: 12px;
-      color: #9ca3af;
-      text-align: center;
-      margin-top: 18px;
-      line-height: 1.6;
-    }
-    .hint a { color: var(--green); text-decoration: none; font-weight: 500; }
-    .spinner {
-      width: 18px; height: 18px;
-      border: 2px solid rgba(255,255,255,0.4);
-      border-top-color: white;
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-      display: none;
-    }
-    .submit-btn.loading .spinner { display: block; }
-    .submit-btn.loading .btn-text { display: none; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .lang-row {
-      display: flex;
-      justify-content: center;
-      gap: 8px;
-      margin-bottom: 20px;
-    }
-    .lang-pill {
-      padding: 5px 14px;
-      border-radius: 99px;
-      border: 1.5px solid #e5e7eb;
-      background: white;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      font-family: var(--font);
-      color: #6b7280;
-      transition: all 0.15s;
-    }
-    .lang-pill.active { border-color: var(--green); color: var(--green); background: var(--green-light); }
-    .setup-info {
-      background: #fffbeb;
-      border: 1px solid #fcd34d;
-      border-radius: 10px;
-      padding: 14px;
-      margin-bottom: 20px;
-      font-size: 13px;
-      color: #92400e;
-      line-height: 1.6;
-    }
-    .setup-info strong { display: block; margin-bottom: 4px; font-size: 14px; }
-    .setup-info code {
-      background: #fef3c7;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-family: monospace;
-      font-size: 12px;
-    }
-    @media (max-width: 480px) {
-      .card { padding: 28px 20px; }
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="login-page">
 
 <a href="index.html" class="logo-link">Наследство</a>
 
@@ -215,7 +17,7 @@
   <button class="lang-pill" onclick="switchLang('EN')" id="pillEN">EN</button>
 </div>
 
-<div class="card">
+<div class="login-card">
 
   <!-- ⚠️ Supabase setup notice -->
   <div class="setup-info" id="setupInfo">
@@ -225,7 +27,7 @@
     на ваши данные из <a href="https://supabase.com/dashboard" target="_blank" style="color:#92400e">supabase.com/dashboard</a> → Settings → API
   </div>
 
-  <div class="tabs">
+  <div class="tabs-login">
     <button class="tab-btn active" onclick="showTab('login')" id="tabLogin"></button>
     <button class="tab-btn" onclick="showTab('register')" id="tabRegister"></button>
   </div>
@@ -248,7 +50,7 @@
       <span class="btn-text" id="btnLoginText"></span>
       <div class="spinner"></div>
     </button>
-    <p class="hint" id="hintLogin"></p>
+    <p class="login-hint" id="hintLogin"></p>
   </div>
 
   <!-- REGISTER -->
@@ -277,7 +79,7 @@
       <span class="btn-text" id="btnRegisterText"></span>
       <div class="spinner"></div>
     </button>
-    <p class="hint" id="hintRegister"></p>
+    <p class="login-hint" id="hintRegister"></p>
   </div>
 
 </div>
@@ -286,8 +88,8 @@
 // ══════════════════════════════════════════
 // 🔧 SUPABASE CONFIG — замените на свои данные
 // ══════════════════════════════════════════
-const SUPABASE_URL  = https://jcoailghownjknqtemmo.supabase.co';   // например: https://xxxx.supabase.co
-const SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impjb2FpbGdob3duamtucXRlbW1vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU5ODUxMTcsImV4cCI6MjA5MTU2MTExN30.SCWsfIn3UI2917nrXsLSf5Um8wljrkQlsJbpj4ayFrI'; // ваш anon/public key
+const SUPABASE_URL  = 'YOUR_SUPABASE_URL';   // например: https://xxxx.supabase.co
+const SUPABASE_KEY  = 'YOUR_SUPABASE_ANON_KEY'; // ваш anon/public key
 
 // ══════════════════════════════════════════
 // ПЕРЕВОДЫ
