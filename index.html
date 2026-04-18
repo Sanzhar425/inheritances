@@ -85,7 +85,8 @@
         </div>
       </div>
       <div class="pm-loc">📍 <span id="pmLocation"></span></div>
-      <button class="btn-wa" id="pmWhatsapp"></button>
+      <button class="btn-wa" id="pmBuy"></button>
+      <button class="btn-wa" id="pmReserve" style="background:#ff8c00;margin-bottom:8px;"></button>
       <button class="btn-res" id="pmFavBtn" onclick="toggleFavFromModal()"></button>
     </div>
   </div>
@@ -200,7 +201,8 @@ const LANG = {
     fillFields: '⚠️ Заполните название и цену', published: '✅ Опубликовано!',
     addedFav: '❤️ Добавлено в избранное', removedFav: 'Удалено из избранного',
     inFav: '❤️ В избранном', toFav: '🤍 В избранное',
-    whatsapp: '💬 Написать в WhatsApp', seller: 'Продавец',
+    buy: '🛒 Купить',
+    reserve: '🔖 Забронировать',
     pickup: ', самовывоз до 22:00', verified: 'Верифицирован через Stud.ID',
     menu: 'Меню', language: 'Язык', sellMobile: '➕ Продать вещь',
     favModalTitle: '❤️ Избранное',
@@ -233,7 +235,8 @@ const LANG = {
     fillFields: '⚠️ Атауы мен бағасын толтырыңыз', published: '✅ Жарияланды!',
     addedFav: '❤️ Таңдаулыларға қосылды', removedFav: 'Таңдаулылардан алынды',
     inFav: '❤️ Таңдаулыларда', toFav: '🤍 Таңдаулыларға',
-    whatsapp: '💬 WhatsApp-та жазу', seller: 'Сатушы',
+    buy: '🛒 Сатып алу',
+    reserve: '🔖 Брондау',
     pickup: ', 22:00-ге дейін алу', verified: 'Stud.ID арқылы расталған',
     menu: 'Мәзір', language: 'Тіл', sellMobile: '➕ Зат сату',
     favModalTitle: '❤️ Таңдаулылар',
@@ -266,7 +269,8 @@ const LANG = {
     fillFields: '⚠️ Fill in title and price', published: '✅ Published!',
     addedFav: '❤️ Added to favorites', removedFav: 'Removed from favorites',
     inFav: '❤️ In favorites', toFav: '🤍 Add to favorites',
-    whatsapp: '💬 Message on WhatsApp', seller: 'Seller',
+    buy: '🛒 Buy',
+    reserve: '🔖 Reserve',
     pickup: ', pickup until 10 PM', verified: 'Verified via Stud.ID',
     menu: 'Menu', language: 'Language', sellMobile: '➕ Sell an item',
     favModalTitle: '❤️ Favorites',
@@ -429,7 +433,8 @@ let currentProductId = null;
 
 function cardHTML(item) {
   const isFav = DB.isFavorite(item.id);
-  const user = DB.getUser();
+  const sellerName = item.sellerName || t('seller');
+  const sellerLocation = item.sellerLocation || '';
   return `<div class="listing-card" onclick="openProduct(${item.id})">
     <div class="card-img-wrap">
       <img src="${item.image||'https://via.placeholder.com/400x300?text=No+photo'}" alt="${item.title}" class="card-img" onerror="this.src='https://via.placeholder.com/400x300?text=No+photo'">
@@ -442,7 +447,7 @@ function cardHTML(item) {
       <div class="card-meta"><span>👁️ ${item.views}</span><span>📦 ${DB.getCategoryName(item.category)}</span></div>
       <div class="card-seller">
         <img src="https://i.pravatar.cc/60?u=${item.userId}" class="card-avatar" alt="">
-        <div><div class="card-seller-name">${user?.name||t('seller')}</div><div class="card-seller-loc">📍 ${user?.location||''}</div></div>
+        <div><div class="card-seller-name">${sellerName}</div><div class="card-seller-loc">📍 ${sellerLocation}</div></div>
       </div>
     </div>
   </div>`;
@@ -501,17 +506,20 @@ function openFavoritesModal() {
 function openProduct(id) {
   const item = DB.getListing(id); if(!item) return;
   DB.incrementViews(id); currentProductId = id;
-  const user = DB.getUser();
+  const sellerName = item.sellerName || t('seller');
+  const sellerLocation = item.sellerLocation || '';
   document.getElementById('pmImage').src = item.image||'https://via.placeholder.com/520x240?text=No+photo';
   document.getElementById('pmTitle').textContent = item.title;
   document.getElementById('pmPrice').textContent = item.price.toLocaleString('ru')+' ₸';
   document.getElementById('pmDesc').textContent = item.description||'';
-  document.getElementById('pmSellerName').textContent = user?.name||t('seller');
+  document.getElementById('pmSellerName').textContent = sellerName;
   document.getElementById('pmAvatar').src = `https://i.pravatar.cc/80?u=${item.userId}`;
-  document.getElementById('pmLocation').textContent = (user?.location||'')+t('pickup');
+  document.getElementById('pmLocation').textContent = sellerLocation + t('pickup');
   document.getElementById('pmVerifiedLabel').textContent = t('verified');
-  document.getElementById('pmWhatsapp').textContent = t('whatsapp');
-  document.getElementById('pmWhatsapp').onclick = ()=>window.open(`https://wa.me/?text=${encodeURIComponent(item.title+' — '+item.price+' ₸')}`, '_blank');
+  document.getElementById('pmBuy').textContent = t('buy');
+  document.getElementById('pmBuy').onclick = () => window.open(`https://wa.me/?text=${encodeURIComponent(item.title+' — '+item.price+' ₸')}`, '_blank');
+  document.getElementById('pmReserve').textContent = t('reserve');
+  document.getElementById('pmReserve').onclick = () => { showToast('🔖 ' + item.title); closeModals(); };
   updateFavBtn(id);
   document.getElementById('productModal').classList.add('open');
   render();
