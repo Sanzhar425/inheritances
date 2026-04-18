@@ -10,7 +10,13 @@ const DB = {
 
   // ── ИНИЦИАЛИЗАЦИЯ ─────────────────────────────────────────────
   init() {
-    if (this._get('db_v2')) return;
+    if (this._get('db_v3')) return;
+    // Сбрасываем старые данные без sellerName
+    localStorage.removeItem('db_v2');
+    localStorage.removeItem('listings');
+    localStorage.removeItem('current_user');
+    localStorage.removeItem('favorites');
+    localStorage.removeItem('messages');
     const userId = this._id();
     const now = Date.now();
     this._set('current_user', {
@@ -19,34 +25,34 @@ const DB = {
       rating: 5.0, reviews: 12, verified: true,
     });
     this._set('listings', [
-      { id: this._id(), userId, title: 'Микроволновка Samsung', price: 8500, category: 'tech',
+      { id: this._id(), userId, sellerName: 'Ержан С.', sellerLocation: 'КазНУ, Общежитие №17', title: 'Микроволновка Samsung', price: 8500, category: 'tech',
         description: 'В отличном состоянии, использовалась 1 год',
         image: 'https://images.unsplash.com/photo-1584568694244-14fbdf83bd30?w=400&h=300&fit=crop',
         status: 'active', views: 204, createdAt: now - 86400000 * 5 },
-      { id: this._id(), userId, title: 'Диван-кровать', price: 6000, category: 'furniture',
+      { id: this._id(), userId, sellerName: 'Ержан С.', sellerLocation: 'КазНУ, Общежитие №17', title: 'Диван-кровать', price: 6000, category: 'furniture',
         description: 'Удобный, раскладывается',
         image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&h=300&fit=crop',
         status: 'active', views: 168, createdAt: now - 86400000 * 4 },
-      { id: this._id(), userId, title: 'Письменный стол', price: 3500, category: 'furniture',
+      { id: this._id(), userId, sellerName: 'Ержан С.', sellerLocation: 'КазНУ, Общежитие №17', title: 'Письменный стол', price: 3500, category: 'furniture',
         description: 'Деревянный, без дефектов',
         image: 'https://images.unsplash.com/photo-1593642632651-d3fba3ca8d1d?w=400&h=300&fit=crop',
         status: 'sold', views: 98, createdAt: now - 86400000 * 3 },
-      { id: this._id(), userId, title: 'Утюг Philips', price: 4500, category: 'tech',
+      { id: this._id(), userId, sellerName: 'Ержан С.', sellerLocation: 'КазНУ, Общежитие №17', title: 'Утюг Philips', price: 4500, category: 'tech',
         description: 'Паровой, почти новый',
         image: 'https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=400&h=300&fit=crop',
         status: 'sold', views: 143, createdAt: now - 86400000 * 2 },
-      { id: this._id(), userId, title: 'Учебник по матанализу', price: 1200, category: 'books',
+      { id: this._id(), userId, sellerName: 'Ержан С.', sellerLocation: 'КазНУ, Общежитие №17', title: 'Учебник по матанализу', price: 1200, category: 'books',
         description: '2-е издание, без пометок',
         image: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&h=300&fit=crop',
         status: 'active', views: 77, createdAt: now - 86400000 },
-      { id: this._id(), userId, title: 'Электрочайник Bosch', price: 5500, category: 'tech',
+      { id: this._id(), userId, sellerName: 'Ержан С.', sellerLocation: 'КазНУ, Общежитие №17', title: 'Электрочайник Bosch', price: 5500, category: 'tech',
         description: '1.7 л, быстрый нагрев',
         image: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=300&fit=crop',
         status: 'active', views: 120, createdAt: now },
     ]);
     this._set('favorites', []);
     this._set('messages', []);
-    this._set('db_v2', true);
+    this._set('db_v3', true);
   },
 
   // ── ПОЛЬЗОВАТЕЛЬ ─────────────────────────────────────────────
@@ -77,8 +83,12 @@ const DB = {
 
   addListing(data) {
     const l = this._get('listings') ?? [];
+    const user = this.getUser();
     const item = {
-      id: this._id(), userId: this.getUser()?.id,
+      id: this._id(),
+      userId: user?.id,
+      sellerName: user?.name || '',
+      sellerLocation: user?.location || '',
       views: 0, status: 'active', createdAt: Date.now(), ...data,
     };
     l.unshift(item);
