@@ -50,9 +50,5 @@ const Auth = {
   logout() {
     localStorage.removeItem('session_user');
     localStorage.removeItem('current_user');
-    localStorage.removeItem('db_v2');
-    localStorage.removeItem('listings');
-    localStorage.removeItem('favorites');
-    localStorage.removeItem('messages');
   },
 };
